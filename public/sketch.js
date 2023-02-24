@@ -22,8 +22,8 @@ ws.addEventListener('message', (message) =>{
 
     if ('sensorAccData' in data) 
     {
-        speedX += data['x'];
-        speedY += data['y'];
+        speedX += data.x;
+        speedY += data.y;
         console.log('got sensor data acc');
     }
     //console.log(data);
