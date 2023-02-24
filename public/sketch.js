@@ -63,10 +63,10 @@ if (isMobile)
         {
             const acceleration = event.acceleration;
             const message = {
-            type: 'sensorAccData',
-            x: acceleration.x,
-            y: acceleration.y,
-            z: acceleration.z,
+            'type': 'sensorAccData',
+            'x': acceleration.x,
+            'y': acceleration.y,
+            'z': acceleration.z,
             };
             sendMessage(JSON.stringify(message));
         });
@@ -78,10 +78,10 @@ if (isMobile)
             const gamma = event.gamma;
             const message = 
             {
-            type: 'sensorOrientationData',
-            alpha: alpha,
-            beta: beta,
-            gamma: gamma,
+            'type': 'sensorOrientationData',
+            'alpha': alpha,
+            'beta': beta,
+            'gamma': gamma,
             };
             sendMessage(JSON.stringify(message));
         });
