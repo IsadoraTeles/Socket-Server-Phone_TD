@@ -112,12 +112,4 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
-// Add endpoint to receive sensor data from clients
-app.post('/sensor-data', (req, res) => {
-  const jsonData = req.body;
-  if (jsonData.type === 'sensorAccData') {
-    // Broadcast sensor data to all connected clients
-    broadcast(null, JSON.stringify(jsonData), false);
-  }
-  res.send('Sensor data received');
-});
+

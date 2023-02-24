@@ -15,25 +15,49 @@ ws.onopen = function ()
   console.log('Connected to the server.');
 };
 
-ws.onmessage = function (event) 
-{
-  console.log('Received a message from the server:', event.data);
+// ws.onmessage = function (event) 
+// {
+//   console.log('Received a message from the server:', event.data);
 
-  const data = JSON.parse(event.data);
+//   const data = JSON.parse(event.data);
   
-  if (data.type === 'sensorAccData') 
-  {
-    speedX += data.x;
-    speedY += data.y;
-  }
-  else if (data.type === 'sensorOrientationData') 
-  {
-    alphaValue = data.alpha.toFixed(2);
-    betaValue = data.beta.toFixed(2);
-    gammaValue = data.gamma.toFixed(2);
-  }
+//   if (data.type === 'sensorAccData') 
+//   {
+//     speedX += data.x;
+//     speedY += data.y;
+//   }
+//   else if (data.type === 'sensorOrientationData') 
+//   {
+//     alphaValue = data.alpha.toFixed(2);
+//     betaValue = data.beta.toFixed(2);
+//     gammaValue = data.gamma.toFixed(2);
+//   }
 
-};
+// };
+
+ws.addEventListener('message', (message) =>{
+    if(message.data == 'ping')
+    {
+        ws.send('pong');
+        return;
+    }
+
+    let data = JSON.parse(message.data);
+
+    if ('sensorAccData' in data) 
+    {
+        speedX += data[x];
+        speedY += data[y];
+    }
+    else if (data.type == 'sensorOrientationData') 
+    {
+        alphaValue = data[alpha].toFixed(2);
+        betaValue = data[beta].toFixed(2);
+        gammaValue = data[gamma].toFixed(2);
+    }
+
+    console.log(data);
+});
 
 ws.onerror = function (error) 
 {
