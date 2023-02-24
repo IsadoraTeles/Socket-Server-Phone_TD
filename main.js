@@ -73,7 +73,7 @@ const broadcast = (ws, message, includeSelf) =>
   {
     wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
-        client.send(message);
+        client.send(JSON.stringify(message));
       }
     });
   } 
@@ -83,7 +83,7 @@ const broadcast = (ws, message, includeSelf) =>
       if (client !== ws && client.readyState === WebSocket.OPEN) 
       {
         if (jsonData.type === 'sensorAccData') {
-          client.send(message);
+          client.send(JSON.stringify(message));
         }
       }
     });
