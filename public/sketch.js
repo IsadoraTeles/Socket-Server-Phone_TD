@@ -35,17 +35,15 @@ ws.onmessage = function (event)
 
 };
 
-ws.onerror = function (error) {
+ws.onerror = function (error) 
+{
   console.error('WebSocket error:', error);
 };
 
-ws.onclose = function () {
+ws.onclose = function () 
+{
   console.log('Disconnected from the server.');
 };
-
-function sendMessage(message) {
-  ws.send(message);
-}
 
 // Check if the device is a mobile phone
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -58,32 +56,31 @@ if (isMobile)
   
     if (isConfirmed) 
     {
-
         window.addEventListener('devicemotion', function (event) 
         {
-            const acceleration = event.acceleration;
+            var acceleration = event.accelerationIncludingGravity;
             const message = {
-            'type': 'sensorAccData',
-            'x': acceleration.x,
-            'y': acceleration.y,
-            'z': acceleration.z,
+            type : 'sensorAccData',
+            x : acceleration.x,
+            y : acceleration.y,
+            z : acceleration.z,
             };
-            sendMessage(JSON.stringify(message));
+            ws.send(JSON.stringify(message));
         });
         
         window.addEventListener('deviceorientation', function (event) 
         {
-            const alpha = event.alpha;
-            const beta = event.beta;
-            const gamma = event.gamma;
+            var alphaV = event.alpha;
+            var betaV = event.beta;
+            var gammaV = event.gamma;
             const message = 
             {
-            'type': 'sensorOrientationData',
-            'alpha': alpha,
-            'beta': beta,
-            'gamma': gamma,
+            type : 'sensorOrientationData',
+            alpha : alphaV,
+            beta : betaV,
+            gamma : gammaV,
             };
-            sendMessage(JSON.stringify(message));
+            ws.send(JSON.stringify(message));
         });
         }
         else 
