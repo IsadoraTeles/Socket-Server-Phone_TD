@@ -1,4 +1,4 @@
-const ws = new WebSocket('ws://phone-td.onrender.com:443');
+const ws = new WebSocket('wss://phone-td.onrender.com:443');
 
 let x = 50;
 let y = 50;
@@ -10,7 +10,8 @@ let betaValue = 0;
 let gammaValue = 0;
 
 
-ws.onopen = function () {
+ws.onopen = function () 
+{
   console.log('Connected to the server.');
 };
 
@@ -50,7 +51,8 @@ function sendMessage(message) {
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 // If the device is a mobile phone, listen for sensor data
-if (isMobile) {
+if (isMobile) 
+{
   window.addEventListener('devicemotion', function (event) 
   {
     const acceleration = event.acceleration;
