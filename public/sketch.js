@@ -21,7 +21,7 @@ ws.onmessage = function (event)
 
   const data = JSON.parse(event.data);
   
-  if (data.type === 'sensorData') 
+  if (data.type === 'sensorAccData') 
   {
     speedX += data.x;
     speedY += data.y;
@@ -53,32 +53,43 @@ const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 // If the device is a mobile phone, listen for sensor data
 if (isMobile) 
 {
-  window.addEventListener('devicemotion', function (event) 
-  {
-    const acceleration = event.acceleration;
-    const message = {
-      type: 'sensorData',
-      x: acceleration.x,
-      y: acceleration.y,
-      z: acceleration.z,
-    };
-    sendMessage(JSON.stringify(message));
-  });
+    const confirmMessage = 'Allow this website to access your device sensors?';
+    const isConfirmed = window.confirm(confirmMessage);
   
-  window.addEventListener('deviceorientation', function (event) 
-  {
-    const alpha = event.alpha;
-    const beta = event.beta;
-    const gamma = event.gamma;
-    const message = 
+    if (isConfirmed) 
     {
-      type: 'sensorOrientationData',
-      alpha: alpha,
-      beta: beta,
-      gamma: gamma,
-    };
-    sendMessage(JSON.stringify(message));
-  });
+
+        window.addEventListener('devicemotion', function (event) 
+        {
+            const acceleration = event.acceleration;
+            const message = {
+            type: 'sensorAccData',
+            x: acceleration.x,
+            y: acceleration.y,
+            z: acceleration.z,
+            };
+            sendMessage(JSON.stringify(message));
+        });
+        
+        window.addEventListener('deviceorientation', function (event) 
+        {
+            const alpha = event.alpha;
+            const beta = event.beta;
+            const gamma = event.gamma;
+            const message = 
+            {
+            type: 'sensorOrientationData',
+            alpha: alpha,
+            beta: beta,
+            gamma: gamma,
+            };
+            sendMessage(JSON.stringify(message));
+        });
+        }
+        else 
+        {
+            console.log('User denied access to device sensors');
+        }
 }
 
 ///////////////////////

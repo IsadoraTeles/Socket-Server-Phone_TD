@@ -37,7 +37,7 @@ wss.on("connection", function (ws, req) {
 
     try {
       const jsonData = JSON.parse(stringifiedData);
-      if (jsonData.type === 'sensorData') 
+      if (jsonData.type === 'sensorAccData') 
       {
         // Broadcast sensor data to all connected clients
         broadcast(ws, stringifiedData, false);
@@ -73,7 +73,7 @@ const broadcast = (ws, message, includeSelf) => {
   } else {
     wss.clients.forEach((client) => {
       if (client !== ws && client.readyState === WebSocket.OPEN) {
-        if (jsonData.type === 'sensorData' || jsonData.type === 'sensorOrientationData') {
+        if (jsonData.type === 'sensorAccData' || jsonData.type === 'sensorOrientationData') {
           client.send(message);
         }
       }
@@ -102,7 +102,7 @@ app.get('/', (req, res) => {
 // Add endpoint to receive sensor data from clients
 app.post('/sensor-data', (req, res) => {
   const jsonData = req.body;
-  if (jsonData.type === 'sensor') {
+  if (jsonData.type === 'sensorAccData') {
     // Broadcast sensor data to all connected clients
     broadcast(null, JSON.stringify(jsonData), false);
   }
