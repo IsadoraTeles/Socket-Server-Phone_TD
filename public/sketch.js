@@ -1,16 +1,22 @@
 const ws = new WebSocket('wss://phone-td.onrender.com:443');
 
-let posX = 50;
-let posY = 50;
-let speedX = 0;
-let speedY = 0;
+var px = 50; // Position x and y
+var py = 50;
+var vx = 0.0; // Velocity x and y
+var vy = 0.0;
+var updateRate = 1/60; // Sensor refresh rate
+
+let rotation_degrees = 0;
+let frontToBack_degrees = 0;
+let leftToRight_degrees = 0;
 
 ws.onopen = function () 
 {
   console.log('Connected to the server.');
 };
 
-ws.addEventListener('message', (message) =>{
+ws.addEventListener('message', (message) =>
+{
     if(message.data == 'ping')
     {
         ws.send('pong');
@@ -19,12 +25,12 @@ ws.addEventListener('message', (message) =>{
     }
 
     let data = JSON.parse(message.data);
-
-    if ('sensorAccData' in data) 
+    if ('sensorData' in data) 
     {
-        speedX += data.x;
-        speedY += data.y;
-        console.log('got sensor data acc');
+        let valAlpha = data.a;
+        let valBeta = data.b;
+        let valueGama = data.g. 
+        console.log('Got : ', valAlpha, valBeta, valueGama);
     }
     //console.log(data);
 });
@@ -45,49 +51,55 @@ const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 // If the device is a mobile phone, listen for sensor data
 if (isMobile) 
 {
-    const confirmMessage = 'Allow this website to access your device sensors?';
-    const isConfirmed = window.confirm(confirmMessage);
-  
-    if (isConfirmed) 
+    DeviceMotionEvent.requestPermission().then(response => 
     {
-        window.addEventListener('devicemotion', function (event) 
+        if (response == 'granted') 
         {
-            var acceleration = event.accelerationIncludingGravity;
-            const message = {
-            type : 'sensorAccData',
-            x : acceleration.x,
-            y : acceleration.y,
-            z : acceleration.z,
-            };
-            ws.send(JSON.stringify(message));
-        });
-    }
-    else 
-    {
-        console.log('User denied access to device sensors');
-    }
+            // Add a listener to get smartphone orientation 
+            // in the alpha-beta-gamma axes (units in degrees)
+            window.addEventListener('deviceorientation',(event) => 
+            {
+                // Expose each orientation angle in a more readable way
+                rotation_degrees = event.alpha;
+                frontToBack_degrees = event.beta;
+                leftToRight_degrees = event.gamma;
+                
+                ws.send(JSON.stringify({'type' : 'sensorData', a : rotation_degrees, b : frontToBack_degrees, g : leftToRight_degrees}));
+            });
+        }
+    });
 }
 
-///////////////////////
+///////////////////////////////////////
 
 function setup() 
 {
     createCanvas(400, 400);
     ellipseMode(CENTER);
-  }
+}
   
-  function draw() 
-  {
+function draw() 
+{
     //background(220);
-    posX += speedX;
-    posY += speedY;
-    if (posX > width || posX < 0) 
-    {
-      speedX *= -1;
+    // Update velocity according to how tilted the phone is
+    // Since phones are narrower than they are long, double the increase to the x velocity
+    vx = vx + leftToRight_degrees * updateRate*2; 
+    vy = vy + frontToBack_degrees * updateRate;
+
+    // Update position and clip it to bounds
+    px = px + vx*.5;
+    if (px > width || px < 0)
+    { 
+        px = Math.max(0, Math.min(98, px)) // Clip px between 0-98
+        vx = 0;
     }
-    if (posY > height || posY < 0) 
+
+    py = py + vy*.5;
+    if (py > height || py < 0)
     {
-      speedY *= -1;
+        py = Math.max(0, Math.min(98, py)) // Clip py between 0-98
+        vy = 0;
     }
-    ellipse(posX, posY, 50, 50);
-  }
+
+    ellipse(px, py, 50, 50);
+}

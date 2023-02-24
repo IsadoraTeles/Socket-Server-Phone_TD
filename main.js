@@ -36,22 +36,7 @@ wss.on("connection", function (ws, req) {
       console.log('keepAlive');
       return;
     }
-
-    try 
-    {
-      const jsonData = JSON.parse(data);
-      if (jsonData.type === 'sensorAccData') 
-      {
-        // Broadcast sensor data to all connected clients
-        broadcast(ws, jsonData, false);
-        //console.log('sending sensor data');
-      }
-    } 
-    
-    catch (error) 
-    {
-      console.error(error);
-    }
+    broadcast(ws, stringifiedData, false);
   });
 
   ws.on("close", (data) => 
@@ -71,20 +56,21 @@ const broadcast = (ws, message, includeSelf) =>
 {
   if (includeSelf) 
   {
-    wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(JSON.stringify(message));
+    wss.clients.forEach((client) => 
+    {
+      if (client.readyState === WebSocket.OPEN) 
+      {
+        client.send(message);
       }
     });
   } 
   else 
   {
-    wss.clients.forEach((client) => {
+    wss.clients.forEach((client) => 
+    {
       if (client !== ws && client.readyState === WebSocket.OPEN) 
       {
-        if (jsonData.type === 'sensorAccData') {
-          client.send(JSON.stringify(message));
-        }
+        client.send(message);
       }
     });
   }
