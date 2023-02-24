@@ -28,14 +28,17 @@ wss.on("connection", function (ws, req) {
     keepServerAlive();
   }
 
-  ws.on("message", (data) => {
+  ws.on("message", (data) => 
+  {
     let stringifiedData = data.toString();
-    if (stringifiedData === 'pong') {
+    if (stringifiedData === 'pong') 
+    {
       console.log('keepAlive');
       return;
     }
 
-    try {
+    try 
+    {
       const jsonData = JSON.parse(stringifiedData);
       if (jsonData.type === 'sensorAccData') 
       {
@@ -47,15 +50,20 @@ wss.on("connection", function (ws, req) {
         // Broadcast device orientation sensor data to all connected clients
         broadcast(ws, stringifiedData, false);
       }
-    } catch (error) {
+    } 
+    
+    catch (error) 
+    {
       console.error(error);
     }
   });
 
-  ws.on("close", (data) => {
+  ws.on("close", (data) => 
+  {
     console.log("closing connection");
 
-    if (wss.clients.size === 0) {
+    if (wss.clients.size === 0) 
+    {
       console.log("last client disconnected, stopping keepAlive interval");
       clearInterval(keepAliveId);
     }
@@ -63,19 +71,24 @@ wss.on("connection", function (ws, req) {
 });
 
 // Implement broadcast function because of ws doesn't have it
-const broadcast = (ws, message, includeSelf) => {
-  if (includeSelf) {
+const broadcast = (ws, message, includeSelf) => 
+{
+  if (includeSelf) 
+  {
     wss.clients.forEach((client) => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(message);
       }
     });
-  } else {
+  } 
+  else 
+  {
     wss.clients.forEach((client) => {
-      if (client !== ws && client.readyState === WebSocket.OPEN) {
-        if (jsonData.type === 'sensorAccData' || jsonData.type === 'sensorOrientationData') {
+      if (client !== ws && client.readyState === WebSocket.OPEN) 
+      {
+        //if (jsonData.type === 'sensorAccData' || jsonData.type === 'sensorOrientationData') {
           client.send(message);
-        }
+        //}
       }
     });
   }
