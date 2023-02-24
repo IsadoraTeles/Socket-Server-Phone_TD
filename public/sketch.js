@@ -15,24 +15,24 @@ ws.onopen = function ()
   console.log('Connected to the server.');
 };
 
-ws.addEventListener('message', (message) =>
+ws.on('message', (data) =>
 {
-    if(message.data == 'ping')
+    let stringifiedData = data.toString();
+    if(stringifiedData == 'ping')
     {
         ws.send('pong');
         console.log('got ping, sent pong');
         return;
     }
 
-    let data = JSON.parse(message.data);
     if ('sensorData' in data) 
     {
         let valAlpha = data.a;
         let valBeta = data.b;
-        let valueGama = data.g. 
+        let valueGama = data.g; 
         console.log('Got : ', valAlpha, valBeta, valueGama);
     }
-    //console.log(data);
+    console.log(data);
 });
 
 ws.onerror = function (error) 
