@@ -49,26 +49,21 @@ ws.onclose = function ()
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 // If the device is a mobile phone, listen for sensor data
-if (isMobile) 
+
+    
+// Add a listener to get smartphone orientation 
+// in the alpha-beta-gamma axes (units in degrees)
+window.addEventListener('deviceorientation',(event) => 
 {
-    DeviceMotionEvent.requestPermission().then(response => 
-    {
-        if (response == 'granted') 
-        {
-            // Add a listener to get smartphone orientation 
-            // in the alpha-beta-gamma axes (units in degrees)
-            window.addEventListener('deviceorientation',(event) => 
-            {
-                // Expose each orientation angle in a more readable way
-                rotation_degrees = event.alpha;
-                frontToBack_degrees = event.beta;
-                leftToRight_degrees = event.gamma;
-                
-                ws.send(JSON.stringify({'type' : 'sensorData', a : rotation_degrees, b : frontToBack_degrees, g : leftToRight_degrees}));
-            });
-        }
-    });
-}
+    // Expose each orientation angle in a more readable way
+    rotation_degrees = event.alpha;
+    frontToBack_degrees = event.beta;
+    leftToRight_degrees = event.gamma;
+    
+    ws.send(JSON.stringify({'type' : 'sensorData', a : rotation_degrees, b : frontToBack_degrees, g : leftToRight_degrees}));
+});
+      
+
 
 ///////////////////////////////////////
 
