@@ -44,11 +44,13 @@ wss.on("connection", function (ws, req) {
       {
         // Broadcast sensor data to all connected clients
         broadcast(ws, stringifiedData, false);
+        console.log('sending sensor data');
       }
       if (jsonData.type === 'sensorOrientationData') 
       {
         // Broadcast device orientation sensor data to all connected clients
         broadcast(ws, stringifiedData, false);
+        console.log('sending sensor data');
       }
     } 
     

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Web Socket Node Server Example",
   "main": "main.js",
-  "author": "Torin Blankensmith",
+  "author": "Isadora Teles",
   "license": "MIT",
   "private": false,
   "scripts": {
