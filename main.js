@@ -34,7 +34,22 @@ wss.on("connection", function (ws, req) {
       console.log('keepAlive');
       return;
     }
-    broadcast(ws, stringifiedData, false);
+
+    try {
+      const jsonData = JSON.parse(stringifiedData);
+      if (jsonData.type === 'sensorData') 
+      {
+        // Broadcast sensor data to all connected clients
+        broadcast(ws, stringifiedData, false);
+      }
+      if (jsonData.type === 'sensorOrientationData') 
+      {
+        // Broadcast device orientation sensor data to all connected clients
+        broadcast(ws, stringifiedData, false);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   });
 
   ws.on("close", (data) => {
@@ -58,7 +73,9 @@ const broadcast = (ws, message, includeSelf) => {
   } else {
     wss.clients.forEach((client) => {
       if (client !== ws && client.readyState === WebSocket.OPEN) {
-        client.send(message);
+        if (jsonData.type === 'sensorData' || jsonData.type === 'sensorOrientationData') {
+          client.send(message);
+        }
       }
     });
   }
@@ -80,4 +97,14 @@ const broadcast = (ws, message, includeSelf) => {
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
+});
+
+// Add endpoint to receive sensor data from clients
+app.post('/sensor-data', (req, res) => {
+  const jsonData = req.body;
+  if (jsonData.type === 'sensor') {
+    // Broadcast sensor data to all connected clients
+    broadcast(null, JSON.stringify(jsonData), false);
+  }
+  res.send('Sensor data received');
 });
