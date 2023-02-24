@@ -44,13 +44,7 @@ wss.on("connection", function (ws, req) {
       {
         // Broadcast sensor data to all connected clients
         broadcast(ws, stringifiedData, false);
-        console.log('sending sensor data');
-      }
-      if (jsonData.type === 'sensorOrientationData') 
-      {
-        // Broadcast device orientation sensor data to all connected clients
-        broadcast(ws, stringifiedData, false);
-        console.log('sending sensor data');
+        //console.log('sending sensor data');
       }
     } 
     
@@ -88,9 +82,9 @@ const broadcast = (ws, message, includeSelf) =>
     wss.clients.forEach((client) => {
       if (client !== ws && client.readyState === WebSocket.OPEN) 
       {
-        //if (jsonData.type === 'sensorAccData' || jsonData.type === 'sensorOrientationData') {
+        if (jsonData.type === 'sensorAccData') {
           client.send(message);
-        //}
+        }
       }
     });
   }
@@ -109,9 +103,5 @@ const broadcast = (ws, message, includeSelf) =>
   }, 50000);
 };
 
-
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
 
 

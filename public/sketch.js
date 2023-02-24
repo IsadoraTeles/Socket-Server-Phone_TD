@@ -5,36 +5,10 @@ let posY = 50;
 let speedX = 0;
 let speedY = 0;
 
-
-let alphaValue = 0;
-let betaValue = 0;
-let gammaValue = 0;
-
-
 ws.onopen = function () 
 {
   console.log('Connected to the server.');
 };
-
-// ws.onmessage = function (event) 
-// {
-//   console.log('Received a message from the server:', event.data);
-
-//   const data = JSON.parse(event.data);
-  
-//   if (data.type === 'sensorAccData') 
-//   {
-//     speedX += data.x;
-//     speedY += data.y;
-//   }
-//   else if (data.type === 'sensorOrientationData') 
-//   {
-//     alphaValue = data.alpha.toFixed(2);
-//     betaValue = data.beta.toFixed(2);
-//     gammaValue = data.gamma.toFixed(2);
-//   }
-
-// };
 
 ws.addEventListener('message', (message) =>{
     if(message.data == 'ping')
@@ -48,20 +22,11 @@ ws.addEventListener('message', (message) =>{
 
     if ('sensorAccData' in data) 
     {
-        speedX += data.x;
-        speedY += data.y;
+        speedX += data['x'];
+        speedY += data['y'];
         console.log('got sensor data acc');
     }
-    else if (data.type == 'sensorOrientationData') 
-    {
-        alphaValue = data.alpha.toFixed(2);
-        betaValue = data.beta.toFixed(2);
-        gammaValue = data.gamma.toFixed(2);
-
-        console.log('got sensor data orient');
-    }
-
-    console.log(data);
+    //console.log(data);
 });
 
 ws.onerror = function (error) 
@@ -96,26 +61,11 @@ if (isMobile)
             };
             ws.send(JSON.stringify(message));
         });
-        
-        window.addEventListener('deviceorientation', function (event) 
-        {
-            var alphaV = event.alpha;
-            var betaV = event.beta;
-            var gammaV = event.gamma;
-            const message = 
-            {
-            type : 'sensorOrientationData',
-            alpha : alphaV,
-            beta : betaV,
-            gamma : gammaV,
-            };
-            ws.send(JSON.stringify(message));
-        });
-        }
-        else 
-        {
-            console.log('User denied access to device sensors');
-        }
+    }
+    else 
+    {
+        console.log('User denied access to device sensors');
+    }
 }
 
 ///////////////////////
@@ -128,7 +78,7 @@ function setup()
   
   function draw() 
   {
-    background(220);
+    //background(220);
     posX += speedX;
     posY += speedY;
     if (posX > width || posX < 0) 
