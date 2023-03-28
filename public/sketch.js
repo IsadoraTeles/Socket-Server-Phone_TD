@@ -10,11 +10,13 @@ let rotation_degrees = 0;
 let frontToBack_degrees = 0;
 let leftToRight_degrees = 0;
 
-ws.onopen = function () {
+ws.onopen = function () 
+{
   console.log('Connected to the server.');
 };
 
-ws.onmessage = function (event) {
+ws.onmessage = function (event) 
+{
     let data = JSON.parse(event.data);
     let stringifiedData = data.toString();
     if(stringifiedData === 'ping') {
@@ -24,10 +26,11 @@ ws.onmessage = function (event) {
     }
 
     if (data.type === 'sensorData') {
+        let myId = data.id;
         let valAlpha = data.a;
         let valBeta = data.b;
         let valueGamma = data.g; 
-        console.log('Got : ', valAlpha, valBeta, valueGamma);
+        console.log('Got : ', myId, valAlpha, valBeta, valueGamma);
     }
 };
 
@@ -52,7 +55,7 @@ if (isMobile) {
         frontToBack_degrees = event.beta;
         leftToRight_degrees = event.gamma;
 
-        ws.send(JSON.stringify({'type': 'sensorData', 'a': rotation_degrees, 'b': frontToBack_degrees, 'g': leftToRight_degrees}));
+        ws.send(JSON.stringify({'type': 'sensorData', 'id' : ws.id , 'a': rotation_degrees, 'b': frontToBack_degrees, 'g': leftToRight_degrees}));
     });
 }
 

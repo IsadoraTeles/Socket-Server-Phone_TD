@@ -19,14 +19,30 @@ const wss =
 server.listen(serverPort);
 console.log(`Server started on port ${serverPort} in stage ${process.env.NODE_ENV}`);
 
+wss.getUniqueID = function () 
+{
+  function s4() 
+  {
+      return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+  }
+  return s4() + s4() + '-' + s4();
+};
+
 wss.on("connection", function (ws, req) {
   console.log("Connection Opened");
   console.log("Client size: ", wss.clients.size);
+
+  ws.id = wss.getUniqueID();
 
   if (wss.clients.size === 1) {
     console.log("first connection. starting keepalive");
     keepServerAlive();
   }
+
+  wss.clients.forEach(function each(client) 
+  {
+    console.log('Client.ID: ' + client.id);
+  });
 
   ws.on("message", (data) => 
   {
