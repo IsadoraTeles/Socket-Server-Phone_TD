@@ -39,8 +39,7 @@ wss.on("connection", function (ws, req) {
     keepServerAlive();
   }
 
-  wss.clients.forEach(function each(client) 
-  {
+  wss.clients.forEach(function each(client) {
     console.log('Client.ID: ' + client.id);
   });
 
