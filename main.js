@@ -59,6 +59,8 @@ wss.on("connection", function (ws, req)
     console.log("closing connection");
 
     delete clients[ws.clientId];
+
+    console.log(Object.keys(clients).length);
     console.log(`Client disconnected with id ${ws.clientId}`);
 
     if (wss.clients.size === 0) 
