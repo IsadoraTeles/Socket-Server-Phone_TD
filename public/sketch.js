@@ -49,23 +49,25 @@ ws.onmessage = function (event)
     }
 };
 
-// ws.onerror = function (error) {
-//   console.error('WebSocket error:', error);
-// };
+ws.onerror = function (error) 
+{
+  console.error('WebSocket error:', error);
+};
 
-// ws.onclose = function () {
-//   console.log('Disconnected from the server.');
-// };
+ws.onclose = function () 
+{
+  console.log('Disconnected from the server.');
+};
 
-ws.addEventListener('error', (error) => {
-    console.error('Error in the connection', error);
-    alert('error connecting socket server', error);
-});
+// ws.addEventListener('error', (error) => {
+//     console.error('Error in the connection', error);
+//     alert('error connecting socket server', error);
+// });
 
-ws.addEventListener('close', (event) => {
-    console.log('Socket connection closed');
-    alert('closing socket server');
-});
+// ws.addEventListener('close', (event) => {
+//     console.log('Socket connection closed');
+//     alert('closing socket server');
+// });
 
 ws.addEventListener('message', (event) => 
 {
