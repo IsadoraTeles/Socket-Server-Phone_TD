@@ -40,7 +40,7 @@ wss.on("connection", function (ws, req)
 
   ws.clientId = clientId;
   clients[clientId] = ws;
-  ws.send(JSON.stringify({ type: 'client-id', id: ws.clientId }));
+  ws.send(JSON.stringify({ 'type': 'client-id', 'id' : ws.clientId }));
   console.log(`Client connected with id ${ws.clientId}`);
   
   ws.on("message", (data) => 
