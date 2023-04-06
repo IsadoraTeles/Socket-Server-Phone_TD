@@ -87,7 +87,7 @@ const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 // If the device is a mobile phone, listen for sensor data
 if (isMobile) 
 {
-    mobile == true;
+    mobile = true;
     // Add a listener to get smartphone orientation 
     // in the alpha-beta-gamma axes (units in degrees)
     window.addEventListener('deviceorientation', (event) => {
@@ -101,7 +101,7 @@ if (isMobile)
 }
 else
 {
-    mobile == false;
+    mobile = false;
 
     document.addEventListener('mousedown', function(event) 
     {
