@@ -67,6 +67,16 @@ ws.addEventListener('close', (event) => {
     alert('closing socket server');
 });
 
+ws.addEventListener('message', (event) => 
+{
+    const data = JSON.parse(event.data);
+    if (data.type === 'client-id') 
+    {
+      const clientId = data.id;
+      console.log(`Received client ID: ${clientId}`);
+    }
+});
+
 // Check if the device is a mobile phone
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 

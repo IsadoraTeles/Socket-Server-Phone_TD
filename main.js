@@ -11,6 +11,8 @@ const WebSocket = require("ws");
 
 let keepAliveId;
 
+const clients = {};
+
 const wss =
   process.env.NODE_ENV === "production"
     ? new WebSocket.Server({ server })
@@ -24,12 +26,25 @@ wss.on("connection", function (ws, req)
   console.log("Connection Opened");
   console.log("Client size: ", wss.clients.size);
 
-
   if (wss.clients.size === 1) 
   {
     console.log("first connection. starting keepalive");
     keepServerAlive();
   }
+
+  const clientId = req.url.split('/')[1]; // Extract client ID from URL
+  if (clientId) 
+  {
+    ws.clientId = clientId;
+    clients[clientId] = ws;
+    ws.send(JSON.stringify({ type: 'client-id', id: ws.clientId }));
+  } 
+  else 
+  {
+    ws.terminate(); // Close connection if no client ID
+  }
+
+  console.log(`Client connected with id ${ws.clientId}`);
 
   ws.on("message", (data) => 
   {
@@ -45,6 +60,9 @@ wss.on("connection", function (ws, req)
   ws.on("close", (data) => 
   {
     console.log("closing connection");
+
+    delete clients[ws.clientId];
+    console.log(`Client disconnected with id ${ws.clientId}`);
 
     if (wss.clients.size === 0) 
     {
