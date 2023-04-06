@@ -22,7 +22,7 @@ ws.onmessage = function (event)
 {
     let data = JSON.parse(event.data);
     let stringifiedData = data.toString();
-    
+
     if(stringifiedData === 'ping') 
     {
         ws.send('pong');
@@ -32,19 +32,17 @@ ws.onmessage = function (event)
 
     if (data.type === 'sensorData') 
     {
-        let myId = data.id;
         let valAlpha = data.a;
         let valBeta = data.b;
         let valueGamma = data.g; 
-        console.log('Got : ', myId, valAlpha, valBeta, valueGamma);
+        console.log('Got : ', valAlpha, valBeta, valueGamma);
     }
 
     if (data.type === 'mouseData') 
     {
-        let myId = data.id;
         let valX = data.x;
         let valY = data.y;
-        console.log('Got : ', myId, valX, valY);
+        console.log('Got : ', valX, valY);
     }
 };
 
@@ -78,7 +76,7 @@ else
 {
     mobile == false;
 
-    document.addEventListener('mousedown', function(event) 
+    document.addEventListener('mousemove', function(event) 
     {
         // Get the x and y coordinates of the mouse click
         x = event.clientX;
@@ -122,7 +120,7 @@ function draw()
         ellipse(px, py, 50, 50);
     }
 
-    else 
+    else if (!mobile)
     {
         ellipse(x, y, 50, 50);
     }
