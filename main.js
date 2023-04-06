@@ -93,7 +93,7 @@ const keepServerAlive = () =>
         client.send('ping');
       }
     });
-  }, 50000);
+  }, 20000);
 };
 
 
