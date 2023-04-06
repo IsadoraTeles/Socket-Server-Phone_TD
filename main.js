@@ -12,8 +12,9 @@ const WebSocket = require("ws");
 let keepAliveId;
 
 const clients = {};
+let nClients = 0;
 
-const { v4: uuidv4 } = require('uuid'); // Import uuid library
+//const { v4: uuidv4 } = require('uuid'); // Import uuid library
 
 const wss =
   process.env.NODE_ENV === "production"
@@ -27,6 +28,7 @@ wss.on("connection", function (ws, req)
 {
   console.log("Connection Opened");
   console.log("Client size: ", wss.clients.size);
+  nClients += 1;
 
   if (wss.clients.size === 1) 
   {
@@ -34,15 +36,13 @@ wss.on("connection", function (ws, req)
     keepServerAlive();
   }
 
-  const clientId = uuidv4(); // Generate unique client ID
-  
+  const clientId = nClients; // Generate unique client ID
+
   ws.clientId = clientId;
   clients[clientId] = ws;
   ws.send(JSON.stringify({ type: 'client-id', id: ws.clientId }));
-
-  
   console.log(`Client connected with id ${ws.clientId}`);
-
+  
   ws.on("message", (data) => 
   {
     let stringifiedData = data.toString();
