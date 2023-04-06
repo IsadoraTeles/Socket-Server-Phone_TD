@@ -13,6 +13,8 @@ let keepAliveId;
 
 const clients = {};
 
+const { v4: uuidv4 } = require('uuid'); // Import uuid library
+
 const wss =
   process.env.NODE_ENV === "production"
     ? new WebSocket.Server({ server })
@@ -32,18 +34,13 @@ wss.on("connection", function (ws, req)
     keepServerAlive();
   }
 
-  const clientId = req.url.split('/')[1]; // Extract client ID from URL
-  if (clientId) 
-  {
-    ws.clientId = clientId;
-    clients[clientId] = ws;
-    ws.send(JSON.stringify({ type: 'client-id', id: ws.clientId }));
-  } 
-  else 
-  {
-    ws.terminate(); // Close connection if no client ID
-  }
+  const clientId = uuidv4(); // Generate unique client ID
+  
+  ws.clientId = clientId;
+  clients[clientId] = ws;
+  ws.send(JSON.stringify({ type: 'client-id', id: ws.clientId }));
 
+  
   console.log(`Client connected with id ${ws.clientId}`);
 
   ws.on("message", (data) => 
