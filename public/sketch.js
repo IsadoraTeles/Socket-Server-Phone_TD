@@ -13,6 +13,9 @@ let rotation_degrees = 0;
 let frontToBack_degrees = 0;
 let leftToRight_degrees = 0;
 
+var isDragging = false;
+
+
 ws.onopen = function () 
 {
   console.log('Connected to the server.');
@@ -46,13 +49,23 @@ ws.onmessage = function (event)
     }
 };
 
-ws.onerror = function (error) {
-  console.error('WebSocket error:', error);
-};
+// ws.onerror = function (error) {
+//   console.error('WebSocket error:', error);
+// };
 
-ws.onclose = function () {
-  console.log('Disconnected from the server.');
-};
+// ws.onclose = function () {
+//   console.log('Disconnected from the server.');
+// };
+
+ws.addEventListener('error', (error) => {
+    console.error('Error in the connection', error);
+    alert('error connecting socket server', error);
+});
+
+ws.addEventListener('close', (event) => {
+    console.log('Socket connection closed');
+    alert('closing socket server');
+});
 
 // Check if the device is a mobile phone
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -76,15 +89,28 @@ else
 {
     mobile == false;
 
+    document.addEventListener('mousedown', function(event) 
+    {
+        isDragging = true;
+    });
+      
+    document.addEventListener('mouseup', function(event)
+    {
+        isDragging = false;
+    });
+
     document.addEventListener('mousemove', function(event) 
     {
-        // Get the x and y coordinates of the mouse click
-        x = event.clientX;
-        y = event.clientY;
+        if (isDragging) 
+        {
+            // Get the x and y coordinates of the mouse
+            var x = event.clientX;
+            var y = event.clientY;
         
-        //console.log("Mouse clicked at position: x=" + x + ", y=" + y);
-        ws.send(JSON.stringify({'type': 'mouseData', 'id' : ws.id , 'x': x, 'y': y}));
-      });
+            //console.log("Mouse clicked at position: x=" + x + ", y=" + y);
+            ws.send(JSON.stringify({'type': 'mouseData', 'id' : ws.id , 'x': x, 'y': y}));
+        }
+    });
 }
 
 function setup() 
@@ -120,9 +146,8 @@ function draw()
         ellipse(px, py, 50, 50);
     }
 
-    else if (!mobile)
+    else if (!mobile && isDragging)
     {
         ellipse(x, y, 50, 50);
     }
-    
 }
