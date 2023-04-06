@@ -59,6 +59,7 @@ ws.onerror = function (error)
 ws.onclose = function () 
 {
   console.log('Disconnected from the server.');
+  ws.send(JSON.stringify({'type': 'clientOUT', 'id' : clientId}));
 };
 
 // ws.addEventListener('error', (error) => {
