@@ -14,7 +14,7 @@ let frontToBack_degrees = 0;
 let leftToRight_degrees = 0;
 
 var isDragging = false;
-
+const clientI = 0;
 
 ws.onopen = function () 
 {
@@ -35,17 +35,19 @@ ws.onmessage = function (event)
 
     if (data.type === 'sensorData') 
     {
+        let id = data.id;
         let valAlpha = data.a;
         let valBeta = data.b;
         let valueGamma = data.g; 
-        console.log('Got : ', valAlpha, valBeta, valueGamma);
+        console.log('Got : ', id, valAlpha, valBeta, valueGamma);
     }
 
     if (data.type === 'mouseData') 
     {
+        let id = data.id;
         let valX = data.x;
         let valY = data.y;
-        console.log('Got : ', valX, valY);
+        console.log('Got : ', id, valX, valY);
     }
 };
 
@@ -74,8 +76,8 @@ ws.addEventListener('message', (event) =>
     const data = JSON.parse(event.data);
     if (data.type === 'client-id') 
     {
-      const clientId = data.id;
-      console.log(`Received client ID: ${clientId}`);
+        clientId = data.id;
+        console.log(`Received client ID: ${clientId}`);
     }
 });
 
@@ -94,7 +96,7 @@ if (isMobile)
         frontToBack_degrees = event.beta;
         leftToRight_degrees = event.gamma;
 
-        ws.send(JSON.stringify({'type': 'sensorData', 'id' : ws.id , 'a': rotation_degrees, 'b': frontToBack_degrees, 'g': leftToRight_degrees}));
+        ws.send(JSON.stringify({'type': 'sensorData', 'id' : clientId , 'a': rotation_degrees, 'b': frontToBack_degrees, 'g': leftToRight_degrees}));
     });
 }
 else
@@ -116,11 +118,11 @@ else
         if (isDragging) 
         {
             // Get the x and y coordinates of the mouse
-            var x = event.clientX;
-            var y = event.clientY;
+            x = event.clientX;
+            y = event.clientY;
         
             //console.log("Mouse clicked at position: x=" + x + ", y=" + y);
-            ws.send(JSON.stringify({'type': 'mouseData', 'id' : ws.id , 'x': x, 'y': y}));
+            ws.send(JSON.stringify({'type': 'mouseData', 'id' : clientId , 'x': x, 'y': y}));
         }
     });
 }
