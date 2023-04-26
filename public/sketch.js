@@ -107,7 +107,7 @@ if (isMobile)
     {
         if (typeof(DeviceMotionEvent) !== 'undefined' && typeof(DeviceMotionEvent.requestPermission) === 'function')
         {
-            output.innerHTML = "iOS 13+ device";
+            //output.innerHTML = "iOS 13+ device";
             DeviceMotionEvent.requestPermission().
             then(response => {
                 if (response === 'granted') {
@@ -122,14 +122,13 @@ if (isMobile)
         }
         else
         {
-            output.innerHTML = "Non-iOS 13 device";
+            //output.innerHTML = "Non-iOS 13 device";
             window.addEventListener('deviceorientation', handleOrientation);
             finishRequest();
         }
     }
 
     requestPermission();
-    
 }
 
 else
