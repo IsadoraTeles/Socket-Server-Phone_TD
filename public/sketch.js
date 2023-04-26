@@ -89,16 +89,42 @@ const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 if (isMobile) 
 {
     mobile = true;
-    // Add a listener to get smartphone orientation 
-    // in the alpha-beta-gamma axes (units in degrees)
-    window.addEventListener('deviceorientation', (event) => {
-        // Expose each orientation angle in a more readable way
-        rotation_degrees = event.alpha;
-        frontToBack_degrees = event.beta;
-        leftToRight_degrees = event.gamma;
 
-        ws.send(JSON.stringify({'type': 'sensorData', 'id' : clientId , 'a': rotation_degrees, 'b': frontToBack_degrees, 'g': leftToRight_degrees}));
-    });
+    // Check if the browser supports DeviceOrientation and DeviceMotion APIs
+    if (window.DeviceOrientationEvent && window.DeviceMotionEvent) 
+    {
+        // Request permission to access sensor data
+        function requestPermission() 
+        {
+            DeviceOrientationEvent.requestPermission()
+                .then(response => 
+                    {
+                    if (response == 'granted') 
+                    {
+                        // Start receiving sensor data
+                        window.addEventListener('deviceorientation', handleOrientation)
+                    }
+                })
+                .catch(console.error)
+        }
+
+        // Handle orientation data
+        function handleOrientation(event) 
+        {
+            // Expose each orientation angle in a more readable way
+            rotation_degrees = event.alpha;
+            frontToBack_degrees = event.beta;
+            leftToRight_degrees = event.gamma;
+
+            ws.send(JSON.stringify({'type': 'sensorData', 'id' : clientId , 'a': rotation_degrees, 'b': frontToBack_degrees, 'g': leftToRight_degrees}));
+        }
+
+        // Call the requestPermission function to start the process
+        requestPermission()
+    } else 
+    {
+        console.log('DeviceOrientation not supported')
+    }
 }
 else
 {

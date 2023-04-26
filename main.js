@@ -61,6 +61,7 @@ wss.on("connection", function (ws, req)
     let stringifiedData = JSON.stringify({'type': 'clientOUT', 'id' : ws.clientId});
     broadcast(ws, stringifiedData, false);
 
+    
     delete clients[ws.clientId];
 
     console.log(Object.keys(clients).length);
