@@ -90,42 +90,48 @@ if (isMobile)
 {
     mobile = true;
 
-    // Check if the browser supports DeviceOrientation and DeviceMotion APIs
-    if (window.DeviceOrientationEvent && window.DeviceMotionEvent) 
+    // Handle orientation data
+    // Add a listener to get smartphone orientation 
+    // in the alpha-beta-gamma axes (units in degrees)
+    function handleOrientation(event) 
     {
-        // Request permission to access sensor data
-        function requestPermission() 
-        {
-            DeviceOrientationEvent.requestPermission()
-                .then(response => 
-                    {
-                    if (response == 'granted') 
-                    {
-                        // Start receiving sensor data
-                        window.addEventListener('deviceorientation', handleOrientation)
-                    }
-                })
-                .catch(console.error)
-        }
+        // Expose each orientation angle in a more readable way
+        rotation_degrees = event.alpha;
+        frontToBack_degrees = event.beta;
+        leftToRight_degrees = event.gamma;
 
-        // Handle orientation data
-        function handleOrientation(event) 
-        {
-            // Expose each orientation angle in a more readable way
-            rotation_degrees = event.alpha;
-            frontToBack_degrees = event.beta;
-            leftToRight_degrees = event.gamma;
-
-            ws.send(JSON.stringify({'type': 'sensorData', 'id' : clientId , 'a': rotation_degrees, 'b': frontToBack_degrees, 'g': leftToRight_degrees}));
-        }
-
-        // Call the requestPermission function to start the process
-        requestPermission()
-    } else 
-    {
-        console.log('DeviceOrientation not supported')
+        ws.send(JSON.stringify({'type': 'sensorData', 'id' : clientId , 'a': rotation_degrees, 'b': frontToBack_degrees, 'g': leftToRight_degrees}));
     }
+
+    function requestPermission()
+    {
+        if (typeof(DeviceMotionEvent) !== 'undefined' && typeof(DeviceMotionEvent.requestPermission) === 'function')
+        {
+            output.innerHTML = "iOS 13+ device";
+            DeviceMotionEvent.requestPermission().
+            then(response => {
+                if (response === 'granted') {
+                    output.innerHTML = "iOS 13+ device (Permission granted)";
+                    window.addEventListener('deviceorientation', handleOrientation);
+                }
+                else {
+                    output.innerHTML = "iOS 13+ device (Permission denied)";
+                }
+                finishRequest();
+            }).catch(console.error);
+        }
+        else
+        {
+            output.innerHTML = "Non-iOS 13 device";
+            window.addEventListener('deviceorientation', handleOrientation);
+            finishRequest();
+        }
+    }
+
+    requestPermission();
+    
 }
+
 else
 {
     mobile = false;
