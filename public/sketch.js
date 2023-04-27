@@ -164,7 +164,7 @@ if (isMobile)
     }
     
   // Call requestSensorPermission to ask for permission
-  requestSensorPermission();
+  //requestSensorPermission();
   
 }
 
@@ -195,6 +195,12 @@ else
         }
     });
 }
+
+const requestPermissionButton = document.querySelector('#request-permission-button');
+
+requestPermissionButton.addEventListener('click', function() {
+  requestSensorPermission();
+});
 
 function setup() 
 {
