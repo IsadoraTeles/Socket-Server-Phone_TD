@@ -66,6 +66,23 @@ ws.onclose = function ()
   ws.send(JSON.stringify({'type': 'clientOUT', 'id' : clientId}));
 };
 
+// Listen for changes in page visibility
+document.addEventListener('visibilitychange', function() 
+{
+    if (!isPageVisible()) 
+    {
+      // If the page is not visible, close the socket connection
+      ws.close();
+    } 
+    else 
+    {
+      // If the page is visible, reconnect to the socket server
+      connect();
+    }
+}, false);
+  
+
+
 ws.addEventListener('message', (event) => 
 {
     const data = JSON.parse(event.data);
@@ -186,7 +203,7 @@ function setup()
   
 function draw() 
 {
-    background(220);
+    //background(220);
 
     if(mobile)
     {
