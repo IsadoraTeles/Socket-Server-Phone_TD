@@ -72,6 +72,7 @@ document.addEventListener('visibilitychange', function()
     if (!isPageVisible()) 
     {
       // If the page is not visible, close the socket connection
+      ws.send(JSON.stringify({'type': 'clientOUT', 'id' : clientId}));
       ws.close();
     } 
     else 
