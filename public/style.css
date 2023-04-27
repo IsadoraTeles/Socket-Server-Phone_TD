@@ -5,3 +5,9 @@ html, body {
   canvas {
     display: block;
   }
+
+  #sensor-button {
+    width: 300px;
+    height: 100px;
+    font-size: 40px;
+  }

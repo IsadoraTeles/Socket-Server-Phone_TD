@@ -16,6 +16,9 @@ let leftToRight_degrees = 0;
 var isDragging = false;
 let clientId = 0;
 
+let w = 1000;
+let h = 1000;
+
 ws.onopen = function () 
 {
   console.log('Connected to the server.');
@@ -117,14 +120,14 @@ if (isMobile)
         px += vx * 0.5;
         if (px > width || px < 0) 
         { 
-            px = Math.max(0, Math.min(398, px)); // Clip px between 0-398
+            px = Math.max(0, Math.min(w, px)); // Clip px between 0-398
             vx = 0;
         }
 
         py += vy * 0.5;
         if (py > height || py < 0) 
         {
-            py = Math.max(0, Math.min(398, py)); // Clip py between 0-398
+            py = Math.max(0, Math.min(h, py)); // Clip py between 0-398
             vy = 0;
         }
 
@@ -205,7 +208,7 @@ sensorButton.addEventListener('click', function()
 
 function setup() 
 {
-    createCanvas(400, 400);
+    createCanvas(w, h);
     ellipseMode(CENTER);
 }
   
