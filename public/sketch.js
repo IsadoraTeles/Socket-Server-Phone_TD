@@ -40,6 +40,8 @@ ws.onmessage = function (event)
         let valPY = data.py;
         let valueGamma = data.g; 
         console.log('Got : ', id, valPX, valPY, valueGamma);
+
+        ellipse(valPX, valPY, 20, 20);
     }
 
     if (data.type === 'mouseData') 
@@ -48,6 +50,8 @@ ws.onmessage = function (event)
         let valX = data.x;
         let valY = data.y;
         console.log('Got : ', id, valX, valY);
+
+        ellipse(valX, valY, 20, 20);
     }
 };
 
