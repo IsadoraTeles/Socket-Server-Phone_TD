@@ -24,21 +24,24 @@ ws.onmessage = function (event) {
     let data = JSON.parse(event.data);
     let stringifiedData = data.toString();
 
-    if(stringifiedData === 'ping') {
+    if(stringifiedData === 'ping') 
+    {
         ws.send('pong');
         console.log('got ping, sent pong');
         return;
     }
 
-    if (data.type === 'sensorData') {
+    if (data.type === 'sensorData') 
+    {
         let id = data.id;
-        let valAlpha = data.a;
-        let valBeta = data.b;
+        let valPX = data.px;
+        let valPY = data.py;
         let valueGamma = data.g; 
-        console.log('Got : ', id, valAlpha, valBeta, valueGamma);
+        console.log('Got : ', id, valPX, valPY, valueGamma);
     }
 
-    if (data.type === 'mouseData') {
+    if (data.type === 'mouseData') 
+    {
         let id = data.id;
         let valX = data.x;
         let valY = data.y;
@@ -57,7 +60,8 @@ ws.onclose = function () {
 
 ws.addEventListener('message', (event) => {
     const data = JSON.parse(event.data);
-    if (data.type === 'client-id') {
+    if (data.type === 'client-id') 
+    {
         clientId = data.id;
         console.log(`Received client ID: ${clientId}`);
     }
@@ -76,71 +80,41 @@ if (isMobile)
         rotation_degrees = event.alpha;
         frontToBack_degrees = event.beta;
         leftToRight_degrees = event.gamma;
+
+        // Update velocity according to how tilted the phone is
+        // Since phones are narrower than they are long, double the increase to the x velocity
+        vx += leftToRight_degrees * updateRate * 2; 
+        vy += frontToBack_degrees * updateRate;
+
+        // Update position and clip it to bounds
+        px += vx * 0.5;
+        if (px > width || px < 0) 
+        { 
+            px = Math.max(0, Math.min(398, px)); // Clip px between 0-398
+            vx = 0;
+        }
+
+        py += vy * 0.5;
+        if (py > height || py < 0) 
+        {
+            py = Math.max(0, Math.min(398, py)); // Clip py between 0-398
+            vy = 0;
+        }
+
         ws.send(
           JSON.stringify({
-            type: "sensorData",
-            id: clientId,
-            a: rotation_degrees,
-            b: frontToBack_degrees,
-            g: leftToRight_degrees,
+            'type': "sensorData",
+            'id': clientId,
+            'px': px,
+            'py': py,
+            'g': leftToRight_degrees,
           })
         );
     }
 
-    //   function handleMotion(event) 
-    //   {
-    //     acceleration_x = event.accelerationIncludingGravity.x;
-    //     acceleration_y = event.accelerationIncludingGravity.y;
-      
-    //     // Update velocity
-    //     vx += acceleration_x * updateRate;
-    //     vy += acceleration_y * updateRate;
-      
-    //     // Update position and clip it to bounds
-    //     px += vx * 0.5;
-    //     if (px > width || px < 0) 
-    //     {
-    //       px = Math.max(0, Math.min(398, px)); // Clip px between 0-398
-    //       vx = 0;
-    //     }
-      
-    //     py += vy * 0.5;
-    //     if (py > height || py < 0) 
-    //     {
-    //       py = Math.max(0, Math.min(398, py)); // Clip py between 0-398
-    //       vy = 0;
-    //     }
-      
-    //     // Send motion data to server
-    //     ws.send(
-    //       JSON.stringify({
-    //         type: "sensorData",
-    //         id: clientId,
-    //         a: acceleration_x,
-    //         b: acceleration_y,
-    //         g: 0,
-    //       })
-    //     );
-    //   }
-
     // Request permission to use device sensor
     function requestSensorPermission() 
     {
-        // if (
-        // typeof DeviceMotionEvent !== "undefined" &&
-        // typeof DeviceMotionEvent.requestPermission === "function"
-        // ) 
-        // {
-        //     // iOS 13+
-        //     DeviceMotionEvent.requestPermission().then((response) => 
-        //     {
-        //         if (response == "granted") 
-        //         {
-        //         window.addEventListener("devicemotion", handleMotion);
-        //         }
-        //     });
-        // } 
-
         if 
         (
         typeof DeviceOrientationEvent !== "undefined" &&
@@ -158,8 +132,6 @@ if (isMobile)
         } 
         else 
         {
-            // non-iOS 13
-            // window.addEventListener("devicemotion", handleMotion);
             window.addEventListener("deviceorientation", handleOrientation);
         }
     }
@@ -209,24 +181,6 @@ function draw()
 
     if(mobile)
     {
-        // Update velocity according to how tilted the phone is
-        // Since phones are narrower than they are long, double the increase to the x velocity
-        vx += leftToRight_degrees * updateRate * 2; 
-        vy += frontToBack_degrees * updateRate;
-
-        // Update position and clip it to bounds
-        px += vx * 0.5;
-        if (px > width || px < 0) { 
-            px = Math.max(0, Math.min(398, px)); // Clip px between 0-398
-            vx = 0;
-        }
-
-        py += vy * 0.5;
-        if (py > height || py < 0) {
-            py = Math.max(0, Math.min(398, py)); // Clip py between 0-398
-            vy = 0;
-        }
-
         ellipse(px, py, 50, 50);
     }
 
