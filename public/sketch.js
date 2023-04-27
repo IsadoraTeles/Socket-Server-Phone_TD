@@ -16,11 +16,13 @@ let leftToRight_degrees = 0;
 var isDragging = false;
 let clientId = 0;
 
-ws.onopen = function () {
+ws.onopen = function () 
+{
   console.log('Connected to the server.');
 };
 
-ws.onmessage = function (event) {
+ws.onmessage = function (event) 
+{
     let data = JSON.parse(event.data);
     let stringifiedData = data.toString();
 
@@ -49,16 +51,19 @@ ws.onmessage = function (event) {
     }
 };
 
-ws.onerror = function (error) {
+ws.onerror = function (error) 
+{
   console.error('WebSocket error:', error);
 };
 
-ws.onclose = function () {
+ws.onclose = function () 
+{
   console.log('Disconnected from the server.');
   ws.send(JSON.stringify({'type': 'clientOUT', 'id' : clientId}));
 };
 
-ws.addEventListener('message', (event) => {
+ws.addEventListener('message', (event) => 
+{
     const data = JSON.parse(event.data);
     if (data.type === 'client-id') 
     {
