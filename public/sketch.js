@@ -14,27 +14,23 @@ let frontToBack_degrees = 0;
 let leftToRight_degrees = 0;
 
 var isDragging = false;
-const clientI = 0;
+let clientId = 0;
 
-ws.onopen = function () 
-{
+ws.onopen = function () {
   console.log('Connected to the server.');
 };
 
-ws.onmessage = function (event) 
-{
+ws.onmessage = function (event) {
     let data = JSON.parse(event.data);
     let stringifiedData = data.toString();
 
-    if(stringifiedData === 'ping') 
-    {
+    if(stringifiedData === 'ping') {
         ws.send('pong');
         console.log('got ping, sent pong');
         return;
     }
 
-    if (data.type === 'sensorData') 
-    {
+    if (data.type === 'sensorData') {
         let id = data.id;
         let valAlpha = data.a;
         let valBeta = data.b;
@@ -42,8 +38,7 @@ ws.onmessage = function (event)
         console.log('Got : ', id, valAlpha, valBeta, valueGamma);
     }
 
-    if (data.type === 'mouseData') 
-    {
+    if (data.type === 'mouseData') {
         let id = data.id;
         let valX = data.x;
         let valY = data.y;
@@ -51,32 +46,18 @@ ws.onmessage = function (event)
     }
 };
 
-ws.onerror = function (error) 
-{
+ws.onerror = function (error) {
   console.error('WebSocket error:', error);
 };
 
-ws.onclose = function () 
-{
+ws.onclose = function () {
   console.log('Disconnected from the server.');
   ws.send(JSON.stringify({'type': 'clientOUT', 'id' : clientId}));
 };
 
-// ws.addEventListener('error', (error) => {
-//     console.error('Error in the connection', error);
-//     alert('error connecting socket server', error);
-// });
-
-// ws.addEventListener('close', (event) => {
-//     console.log('Socket connection closed');
-//     alert('closing socket server');
-// });
-
-ws.addEventListener('message', (event) => 
-{
+ws.addEventListener('message', (event) => {
     const data = JSON.parse(event.data);
-    if (data.type === 'client-id') 
-    {
+    if (data.type === 'client-id') {
         clientId = data.id;
         console.log(`Received client ID: ${clientId}`);
     }
@@ -90,45 +71,102 @@ if (isMobile)
 {
     mobile = true;
 
-    // Handle orientation data
-    // Add a listener to get smartphone orientation 
-    // in the alpha-beta-gamma axes (units in degrees)
     function handleOrientation(event) 
     {
-        // Expose each orientation angle in a more readable way
         rotation_degrees = event.alpha;
         frontToBack_degrees = event.beta;
         leftToRight_degrees = event.gamma;
-
-        ws.send(JSON.stringify({'type': 'sensorData', 'id' : clientId , 'a': rotation_degrees, 'b': frontToBack_degrees, 'g': leftToRight_degrees}));
+        ws.send(
+          JSON.stringify({
+            type: "sensorData",
+            id: clientId,
+            a: rotation_degrees,
+            b: frontToBack_degrees,
+            g: leftToRight_degrees,
+          })
+        );
     }
 
-    function requestPermission()
+    //   function handleMotion(event) 
+    //   {
+    //     acceleration_x = event.accelerationIncludingGravity.x;
+    //     acceleration_y = event.accelerationIncludingGravity.y;
+      
+    //     // Update velocity
+    //     vx += acceleration_x * updateRate;
+    //     vy += acceleration_y * updateRate;
+      
+    //     // Update position and clip it to bounds
+    //     px += vx * 0.5;
+    //     if (px > width || px < 0) 
+    //     {
+    //       px = Math.max(0, Math.min(398, px)); // Clip px between 0-398
+    //       vx = 0;
+    //     }
+      
+    //     py += vy * 0.5;
+    //     if (py > height || py < 0) 
+    //     {
+    //       py = Math.max(0, Math.min(398, py)); // Clip py between 0-398
+    //       vy = 0;
+    //     }
+      
+    //     // Send motion data to server
+    //     ws.send(
+    //       JSON.stringify({
+    //         type: "sensorData",
+    //         id: clientId,
+    //         a: acceleration_x,
+    //         b: acceleration_y,
+    //         g: 0,
+    //       })
+    //     );
+    //   }
+
+    // Request permission to use device sensor
+    function requestSensorPermission() 
     {
-        if (typeof(DeviceMotionEvent) !== 'undefined' && typeof(DeviceMotionEvent.requestPermission) === 'function')
+        // if (
+        // typeof DeviceMotionEvent !== "undefined" &&
+        // typeof DeviceMotionEvent.requestPermission === "function"
+        // ) 
+        // {
+        //     // iOS 13+
+        //     DeviceMotionEvent.requestPermission().then((response) => 
+        //     {
+        //         if (response == "granted") 
+        //         {
+        //         window.addEventListener("devicemotion", handleMotion);
+        //         }
+        //     });
+        // } 
+
+        if 
+        (
+        typeof DeviceOrientationEvent !== "undefined" &&
+        typeof DeviceOrientationEvent.requestPermission === "function"
+        ) 
         {
-            //output.innerHTML = "iOS 13+ device";
-            DeviceMotionEvent.requestPermission().
-            then(response => {
-                if (response === 'granted') {
-                    output.innerHTML = "iOS 13+ device (Permission granted)";
-                    window.addEventListener('deviceorientation', handleOrientation);
+            // iOS 13+
+            DeviceOrientationEvent.requestPermission().then((response) => 
+            {
+                if (response == "granted") 
+                {
+                window.addEventListener("deviceorientation", handleOrientation);
                 }
-                else {
-                    output.innerHTML = "iOS 13+ device (Permission denied)";
-                }
-                finishRequest();
-            }).catch(console.error);
-        }
-        else
+            });
+        } 
+        else 
         {
-            //output.innerHTML = "Non-iOS 13 device";
-            window.addEventListener('deviceorientation', handleOrientation);
-            finishRequest();
+            // non-iOS 13
+            // window.addEventListener("devicemotion", handleMotion);
+            window.addEventListener("deviceorientation", handleOrientation);
         }
     }
-
-    requestPermission();
+    
+  // Call requestSensorPermission to ask for permission
+  requestSensorPermission();
+  
 }
 
 else
