@@ -32,9 +32,9 @@ ws.onopen = function ()
 
 function updateColor(color) 
 {
-    let colR = Math.round(color[0]);
-    let colG = Math.round(color[1]);
-    let colB = Math.round(color[2]);
+    colR = Math.round(color[0]);
+    colG = Math.round(color[1]);
+    colB = Math.round(color[2]);
     ellipseColor = [colR, colG, colB]; // Update ellipseColor with new color values
     ellipseColor = ellipseColor.map((val) => {
         // Ensure the color values are within the range of 0-255
