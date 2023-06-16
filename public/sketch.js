@@ -234,7 +234,7 @@ else
                 'colG' : ellipseColor[1],
                 'colB' : ellipseColor[2]
             }));
-            console.log('sending : ', id, x, y, ellipseColor[0], ellipseColor[1], ellipseColor[2]);
+            console.log('sending : ', clientId, x, y, ellipseColor[0], ellipseColor[1], ellipseColor[2]);
         }
     });
 }
