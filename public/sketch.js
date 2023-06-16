@@ -32,9 +32,9 @@ ws.onopen = function ()
 
 function updateColor(color) 
 {
-    colR = Math.round(color[0]);
-    colG = Math.round(color[1]);
-    colB = Math.round(color[2]);
+    colR = color[0];
+    colG = color[1];
+    colB = color[2];
     ellipseColor = [colR, colG, colB]; // Update ellipseColor with new color values
     ellipseColor = ellipseColor.map((val) => {
         // Ensure the color values are within the range of 0-255
@@ -60,11 +60,11 @@ ws.onmessage = function (event)
         let valPX = data.px;
         let valPY = data.py;
         let valueGamma = data.g;
-        let valColR = data.colR;
-        let valColG = data.colG;
-        let valColB = data.colB; 
+        let valColR = parseInt(data.colR);
+        let valColG = parseInt(data.colG);
+        let valColB = parseInt(data.colB);
         console.log('Got : ', id, valPX, valPY, valueGamma, valColR, valColG, valColB);
-
+    
         updateColor([valColR, valColG, valColB]);
         fill(ellipseColor[0], ellipseColor[1], ellipseColor[2]); // Use ellipseColor for fill color
         ellipse(valPX, valPY, 20, 20);
@@ -75,11 +75,11 @@ ws.onmessage = function (event)
         let id = data.id;
         let valX = data.x;
         let valY = data.y;
-        let valColR = data.colR;
-        let valColG = data.colG;
-        let valColB = data.colB; 
+        let valColR = parseInt(data.colR);
+        let valColG = parseInt(data.colG);
+        let valColB = parseInt(data.colB);
         console.log('Got : ', id, valX, valY, valColR, valColG, valColB);
-
+    
         updateColor([valColR, valColG, valColB]);
         fill(ellipseColor[0], ellipseColor[1], ellipseColor[2]); // Use ellipseColor for fill color
         ellipse(valX, valY, 20, 20);
@@ -247,12 +247,12 @@ sensorButton.addEventListener('click', function()
 });
 
 // Listen for changes in the color picker
-document.getElementById('colorPicker').addEventListener('input', function(event) {
+document.getElementById('colorPicker').addEventListener('input', function(event) 
+{
     let colorValue = event.target.value;
-    let rgbValues = colorValue.match(/\d+/g);
-    let colR = parseInt(rgbValues[0], 10); // Parse as base 10 integer
-    let colG = parseInt(rgbValues[1], 10);
-    let colB = parseInt(rgbValues[2], 10);
+    let colR = parseInt(colorValue.substring(1, 3), 16); // Parse the red component
+    let colG = parseInt(colorValue.substring(3, 5), 16); // Parse the green component
+    let colB = parseInt(colorValue.substring(5, 7), 16); // Parse the blue component
     updateColor([colR, colG, colB]);
 });
 
