@@ -16,9 +16,9 @@ let leftToRight_degrees = 0;
 var isDragging = false;
 let clientId = 0;
 
-let red = 255;
-let green = 255;
-let blue = 255;
+let red;
+let green;
+let blue;
 
 let w = 1000;
 let h = 1000;
@@ -148,9 +148,9 @@ if (isMobile)
             'px': px,
             'py': py,
             'g': leftToRight_degrees,
-            'red' : red,
-            'green' : green,
-            'blue' : blue
+            'red' : red.value(),
+            'green' : green.value(),
+            'blue' : blue.value()
           })
         );
     }
@@ -212,11 +212,11 @@ else
                 'id' : clientId , 
                 'x': x, 
                 'y': y,
-                'red' : red,
-                'green' : green,
-                'blue' : blue
+                'red' : red.value(),
+                'green' : green.value(),
+                'blue' : blue.value()
             }));
-            console.log('sending : ', clientId, x, y, red, green, blue);
+            console.log('sending : ', clientId, x, y, red.value(), green.value(), blue.value());
         }
     });
 }
