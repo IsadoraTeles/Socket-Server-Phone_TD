@@ -20,6 +20,8 @@ let colR = 0;
 let colG = 0;
 let colB = 0;
 
+let ellipseColor = [0, 0, 0]; // Initialize with default color values
+
 let w = 1000;
 let h = 1000;
 
@@ -34,6 +36,7 @@ function updateColor(color)
     colR = parseInt(rgbValues[0]);
     colG = parseInt(rgbValues[1]);
     colB = parseInt(rgbValues[2]);
+    ellipseColor = [colR, colG, colB]; // Update ellipseColor with new color values
 }
 
 ws.onmessage = function (event) 
@@ -162,7 +165,7 @@ if (isMobile)
             'g': leftToRight_degrees,
             'colR' : colR,
             'colG' : colG,
-            'colB' : colB,
+            'colB' : colB
           })
         );
     }
@@ -219,7 +222,15 @@ else
             y = event.clientY;
         
             //console.log("Mouse clicked at position: x=" + x + ", y=" + y);
-            ws.send(JSON.stringify({'type': 'mouseData', 'id' : clientId , 'x': x, 'y': y}));
+            ws.send(JSON.stringify({
+                'type': 'mouseData', 
+                'id' : clientId , 
+                'x': x, 
+                'y': y,
+                'colR' : colR,
+                'colG' : colG,
+                'colB' : colB
+            }));
         }
     });
 }
@@ -231,27 +242,32 @@ sensorButton.addEventListener('click', function()
     requestSensorPermission();
 });
 
+// Listen for changes in the color picker
+document.getElementById('colorPicker').addEventListener('input', function(event) {
+    updateColor(event.target.value);
+  });
+
 function setup() 
 {
     createCanvas(w, h);
+    background(0);
+
     ellipseMode(CENTER);
 }
   
 function draw() 
 {
-    //background(220);
+
 
     if(mobile)
     {
-        updateColor(`rgb(${valColR}, ${valColG}, ${valColB})`);
-        fill(colR, colG, colB);
+        fill(ellipseColor[0], ellipseColor[1], ellipseColor[2]); // Use ellipseColor for fill color
         ellipse(px, py, 50, 50);
     }
 
     else if (!mobile && isDragging)
     {
-        updateColor(`rgb(${valColR}, ${valColG}, ${valColB})`);
-        fill(colR, colG, colB);
+        fill(ellipseColor[0], ellipseColor[1], ellipseColor[2]); // Use ellipseColor for fill color
         ellipse(x, y, 50, 50);
     }
 }
