@@ -32,9 +32,9 @@ ws.onopen = function ()
 
 function updateColor(color) 
 {
-    colR = Math.round(color[0]);
-    colG = Math.round(color[1]);
-    colB = Math.round(color[2]);
+    let colR = Math.round(color[0]);
+    let colG = Math.round(color[1]);
+    let colB = Math.round(color[2]);
     ellipseColor = [colR, colG, colB]; // Update ellipseColor with new color values
     ellipseColor = ellipseColor.map((val) => {
         // Ensure the color values are within the range of 0-255
@@ -250,9 +250,9 @@ sensorButton.addEventListener('click', function()
 document.getElementById('colorPicker').addEventListener('input', function(event) {
     let colorValue = event.target.value;
     let rgbValues = colorValue.match(/\d+/g);
-    let colR = parseInt(rgbValues[0]);
-    let colG = parseInt(rgbValues[1]);
-    let colB = parseInt(rgbValues[2]);
+    let colR = parseInt(rgbValues[0], 10); // Parse as base 10 integer
+    let colG = parseInt(rgbValues[1], 10);
+    let colB = parseInt(rgbValues[2], 10);
     updateColor([colR, colG, colB]);
 });
 
