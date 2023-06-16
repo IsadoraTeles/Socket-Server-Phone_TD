@@ -32,11 +32,14 @@ ws.onopen = function ()
 
 function updateColor(color) 
 {
-    var rgbValues = color.match(/\d+/g);
-    colR = parseInt(rgbValues[0]);
-    colG = parseInt(rgbValues[1]);
-    colB = parseInt(rgbValues[2]);
+    colR = Math.round(color[0]);
+    colG = Math.round(color[1]);
+    colB = Math.round(color[2]);
     ellipseColor = [colR, colG, colB]; // Update ellipseColor with new color values
+    ellipseColor = ellipseColor.map((val) => {
+        // Ensure the color values are within the range of 0-255
+        return Math.max(0, Math.min(255, val));
+    });
 }
 
 ws.onmessage = function (event) 
@@ -62,7 +65,7 @@ ws.onmessage = function (event)
         let valColB = data.colB; 
         console.log('Got : ', id, valPX, valPY, valueGamma, valColR, valColG, valColB);
 
-        updateColor(`rgb(${valColR}, ${valColG}, ${valColB})`);
+        updateColor([valColR, valColG, valColB]);
         fill(valColR, valColG, valColB);
         ellipse(valPX, valPY, 20, 20);
     }
@@ -77,7 +80,7 @@ ws.onmessage = function (event)
         let valColB = data.colB; 
         console.log('Got : ', id, valX, valY, valColR, valColG, valColB);
 
-        updateColor(`rgb(${valColR}, ${valColG}, ${valColB})`);
+        updateColor([valColR, valColG, valColB]);
         fill(valColR, valColG, valColB);
         ellipse(valX, valY, 20, 20);
     }
@@ -244,8 +247,13 @@ sensorButton.addEventListener('click', function()
 
 // Listen for changes in the color picker
 document.getElementById('colorPicker').addEventListener('input', function(event) {
-    updateColor(event.target.value);
-  });
+    let colorValue = event.target.value;
+    let rgbValues = colorValue.match(/\d+/g);
+    let colR = parseInt(rgbValues[0]);
+    let colG = parseInt(rgbValues[1]);
+    let colB = parseInt(rgbValues[2]);
+    updateColor([colR, colG, colB]);
+});
 
 function setup() 
 {
@@ -257,8 +265,6 @@ function setup()
   
 function draw() 
 {
-
-
     if(mobile)
     {
         fill(ellipseColor[0], ellipseColor[1], ellipseColor[2]); // Use ellipseColor for fill color
