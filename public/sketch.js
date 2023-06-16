@@ -16,11 +16,11 @@ let leftToRight_degrees = 0;
 var isDragging = false;
 let clientId = 0;
 
-let colR = 0;
-let colG = 0;
-let colB = 0;
+let colR = 255;
+let colG = 255;
+let colB = 255;
 
-let ellipseColor = [0, 0, 0]; // Initialize with default color values
+let ellipseColor = [255, 255, 255]; // Initialize with default color values
 
 let w = 1000;
 let h = 1000;
@@ -66,7 +66,7 @@ ws.onmessage = function (event)
         console.log('Got : ', id, valPX, valPY, valueGamma, valColR, valColG, valColB);
 
         updateColor([valColR, valColG, valColB]);
-        fill(valColR, valColG, valColB);
+        fill(ellipseColor[0], ellipseColor[1], ellipseColor[2]); // Use ellipseColor for fill color
         ellipse(valPX, valPY, 20, 20);
     }
 
@@ -81,7 +81,7 @@ ws.onmessage = function (event)
         console.log('Got : ', id, valX, valY, valColR, valColG, valColB);
 
         updateColor([valColR, valColG, valColB]);
-        fill(valColR, valColG, valColB);
+        fill(ellipseColor[0], ellipseColor[1], ellipseColor[2]); // Use ellipseColor for fill color
         ellipse(valX, valY, 20, 20);
     }
 };
@@ -166,9 +166,9 @@ if (isMobile)
             'px': px,
             'py': py,
             'g': leftToRight_degrees,
-            'colR' : colR,
-            'colG' : colG,
-            'colB' : colB
+            'colR' : ellipseColor[0],
+            'colG' : ellipseColor[1],
+            'colB' : ellipseColor[2]
           })
         );
     }
@@ -230,10 +230,11 @@ else
                 'id' : clientId , 
                 'x': x, 
                 'y': y,
-                'colR' : colR,
-                'colG' : colG,
-                'colB' : colB
+                'colR' : ellipseColor[0],
+                'colG' : ellipseColor[1],
+                'colB' : ellipseColor[2]
             }));
+            console.log('sending : ', id, x, y, ellipseColor[0], ellipseColor[1], ellipseColor[2]);
         }
     });
 }
