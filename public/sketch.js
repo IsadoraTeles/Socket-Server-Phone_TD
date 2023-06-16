@@ -16,26 +16,19 @@ let leftToRight_degrees = 0;
 var isDragging = false;
 let clientId = 0;
 
-let colR = 255;
-let colG = 255;
-let colB = 255;
-
-let ellipseColor = [255, 255, 255]; // Initialize with default color values
+let red = 255;
+let green = 255;
+let blue = 255;
 
 let w = 1000;
 let h = 1000;
+
 
 ws.onopen = function () 
 {
   console.log('Connected to the server.');
 };
 
-function updateColor(color) {
-    colR = Math.round(color[0]);
-    colG = Math.round(color[1]);
-    colB = Math.round(color[2]);
-    ellipseColor = [colR, colG, colB]; // Update ellipseColor with new color values
-  }
 
 ws.onmessage = function (event) 
 {
@@ -54,13 +47,12 @@ ws.onmessage = function (event)
         let valPX = data.px;
         let valPY = data.py;
         let valueGamma = data.g;
-        let valColR = Math.round(data.colR); // Parse the red component
-        let valColG = Math.round(data.colG); // Parse the green component
-        let valColB = Math.round(data.colB); // Parse the blue component
+        let valColR = data.red; 
+        let valColG = data.green;
+        let valColB = data.blue;
         console.log('Got : ', id, valPX, valPY, valueGamma, valColR, valColG, valColB);
 
-        updateColor([valColR, valColG, valColB]);
-        fill(ellipseColor[0], ellipseColor[1], ellipseColor[2]); // Use ellipseColor for fill color
+        fill(valColR, valColG, valColB); // Use ellipseColor for fill color
         ellipse(valPX, valPY, 20, 20);
       }
     
@@ -68,13 +60,12 @@ ws.onmessage = function (event)
         let id = data.id;
         let valX = data.x;
         let valY = data.y;
-        let valColR = Math.round(data.colR); // Parse the red component
-        let valColG = Math.round(data.colG); // Parse the green component
-        let valColB = Math.round(data.colB); // Parse the blue component
+        let valColR = data.red; 
+        let valColG = data.green;
+        let valColB = data.blue;
         console.log('Got : ', id, valX, valY, valColR, valColG, valColB);
 
-        updateColor([valColR, valColG, valColB]);
-        fill(ellipseColor[0], ellipseColor[1], ellipseColor[2]); // Use ellipseColor for fill color
+        fill(valColR, valColG, valColB); // Use ellipseColor for fill color
         ellipse(valX, valY, 20, 20);
       }
 };
@@ -106,8 +97,6 @@ document.addEventListener('visibilitychange', function()
     }
 }, false);
   
-
-
 ws.addEventListener('message', (event) => 
 {
     const data = JSON.parse(event.data);
@@ -159,9 +148,9 @@ if (isMobile)
             'px': px,
             'py': py,
             'g': leftToRight_degrees,
-            'colR' : ellipseColor[0],
-            'colG' : ellipseColor[1],
-            'colB' : ellipseColor[2]
+            'red' : red,
+            'green' : green,
+            'blue' : blue
           })
         );
     }
@@ -223,11 +212,11 @@ else
                 'id' : clientId , 
                 'x': x, 
                 'y': y,
-                'colR' : ellipseColor[0],
-                'colG' : ellipseColor[1],
-                'colB' : ellipseColor[2]
+                'red' : red,
+                'green' : green,
+                'blue' : blue
             }));
-            console.log('sending : ', clientId, x, y, ellipseColor[0], ellipseColor[1], ellipseColor[2]);
+            console.log('sending : ', clientId, x, y, red, green, blue);
         }
     });
 }
@@ -239,28 +228,18 @@ sensorButton.addEventListener('click', function()
     requestSensorPermission();
 });
 
-// Listen for changes in the color picker
-document.getElementById('colorPicker').addEventListener('input', function (event) {
-    const red = parseInt(colorValue.substring(1, 3), 16);
-    const green = parseInt(colorValue.substring(3, 5), 16);
-    const blue = parseInt(colorValue.substring(5, 7), 16);
-  
-    // Ensure the color values are within the range of 0-255
-    const clampedRed = Math.max(0, Math.min(255, red));
-    const clampedGreen = Math.max(0, Math.min(255, green));
-    const clampedBlue = Math.max(0, Math.min(255, blue));
-  
-    // Update the ellipse color
-    updateColor([clampedRed, clampedGreen, clampedBlue]);
-  
-    // Output the RGB values
-    console.log(`RGB: ${clampedRed}, ${clampedGreen}, ${clampedBlue}`);
-  });
 
 function setup() 
 {
     createCanvas(w, h);
     background(0);
+
+    red = createSlider(0, 255, 0);
+    red.position(6, 10);
+    green = createSlider(0, 255, 0);
+    green.position(6, 50);
+    blue = createSlider(0, 255, 0);
+    blue.position(6, 90);
 
     ellipseMode(CENTER);
 }
@@ -269,13 +248,13 @@ function draw()
 {
     if(mobile)
     {
-        fill(ellipseColor[0], ellipseColor[1], ellipseColor[2]); // Use ellipseColor for fill color
+        fill((red.value() + green.value() + blue.value())); // Use ellipseColor for fill color
         ellipse(px, py, 50, 50);
     }
 
     else if (!mobile && isDragging)
     {
-        fill(ellipseColor[0], ellipseColor[1], ellipseColor[2]); // Use ellipseColor for fill color
+        fill((red.value() + green.value() + blue.value())); // Use ellipseColor for fill color
         ellipse(x, y, 50, 50);
     }
 }
