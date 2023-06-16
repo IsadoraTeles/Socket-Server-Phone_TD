@@ -246,11 +246,14 @@ sensorButton.addEventListener('click', function()
 
 // Listen for changes in the color picker
 document.getElementById('colorPicker').addEventListener('input', function (event) {
-    let colorValue = event.target.value;
-    let colR = parseInt(colorValue.substring(1, 3), 16); // Parse the red component
-    let colG = parseInt(colorValue.substring(3, 5), 16); // Parse the green component
-    let colB = parseInt(colorValue.substring(5, 7), 16); // Parse the blue component
-    updateColor([colR, colG, colB]);
+    // Retrieve the selected color value
+    const colorValue = e.target.value;
+
+    // Extract the RGB color components
+    const red = parseInt(colorValue.substring(1, 3), 16);
+    const green = parseInt(colorValue.substring(3, 5), 16);
+    const blue = parseInt(colorValue.substring(5, 7), 16);
+
     // Output the RGB values
     console.log(`RGB: ${red}, ${green}, ${blue}`);
   });
