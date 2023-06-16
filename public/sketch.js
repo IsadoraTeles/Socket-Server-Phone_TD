@@ -54,36 +54,34 @@ ws.onmessage = function (event)
         return;
     }
 
-    if (data.type === 'sensorData') 
-    {
+    if (data.type === 'sensorData') {
         let id = data.id;
         let valPX = data.px;
         let valPY = data.py;
         let valueGamma = data.g;
-        let valColR = parseInt(data.colR);
-        let valColG = parseInt(data.colG);
-        let valColB = parseInt(data.colB);
+        let valColR = parseInt(data.colR, 16); // Parse the red component
+        let valColG = parseInt(data.colG, 16); // Parse the green component
+        let valColB = parseInt(data.colB, 16); // Parse the blue component
         console.log('Got : ', id, valPX, valPY, valueGamma, valColR, valColG, valColB);
     
         updateColor([valColR, valColG, valColB]);
         fill(ellipseColor[0], ellipseColor[1], ellipseColor[2]); // Use ellipseColor for fill color
         ellipse(valPX, valPY, 20, 20);
-    }
-
-    if (data.type === 'mouseData') 
-    {
+      }
+    
+      if (data.type === 'mouseData') {
         let id = data.id;
         let valX = data.x;
         let valY = data.y;
-        let valColR = parseInt(data.colR);
-        let valColG = parseInt(data.colG);
-        let valColB = parseInt(data.colB);
+        let valColR = parseInt(data.colR, 16); // Parse the red component
+        let valColG = parseInt(data.colG, 16); // Parse the green component
+        let valColB = parseInt(data.colB, 16); // Parse the blue component
         console.log('Got : ', id, valX, valY, valColR, valColG, valColB);
     
         updateColor([valColR, valColG, valColB]);
         fill(ellipseColor[0], ellipseColor[1], ellipseColor[2]); // Use ellipseColor for fill color
         ellipse(valX, valY, 20, 20);
-    }
+      }
 };
 
 ws.onerror = function (error) 
@@ -247,14 +245,13 @@ sensorButton.addEventListener('click', function()
 });
 
 // Listen for changes in the color picker
-document.getElementById('colorPicker').addEventListener('input', function(event) 
-{
+document.getElementById('colorPicker').addEventListener('input', function (event) {
     let colorValue = event.target.value;
     let colR = parseInt(colorValue.substring(1, 3), 16); // Parse the red component
     let colG = parseInt(colorValue.substring(3, 5), 16); // Parse the green component
     let colB = parseInt(colorValue.substring(5, 7), 16); // Parse the blue component
     updateColor([colR, colG, colB]);
-});
+  });
 
 function setup() 
 {
