@@ -251,6 +251,8 @@ document.getElementById('colorPicker').addEventListener('input', function (event
     let colG = parseInt(colorValue.substring(3, 5), 16); // Parse the green component
     let colB = parseInt(colorValue.substring(5, 7), 16); // Parse the blue component
     updateColor([colR, colG, colB]);
+    // Output the RGB values
+    console.log(`RGB: ${red}, ${green}, ${blue}`);
   });
 
 function setup() 
