@@ -16,6 +16,10 @@ let leftToRight_degrees = 0;
 var isDragging = false;
 let clientId = 0;
 
+let colR = 0;
+let colG = 0;
+let colB = 0;
+
 let w = 1000;
 let h = 1000;
 
@@ -23,6 +27,14 @@ ws.onopen = function ()
 {
   console.log('Connected to the server.');
 };
+
+function updateColor(color) 
+{
+    var rgbValues = color.match(/\d+/g);
+    colR = parseInt(rgbValues[0]);
+    colG = parseInt(rgbValues[1]);
+    colB = parseInt(rgbValues[2]);
+}
 
 ws.onmessage = function (event) 
 {
@@ -41,9 +53,14 @@ ws.onmessage = function (event)
         let id = data.id;
         let valPX = data.px;
         let valPY = data.py;
-        let valueGamma = data.g; 
-        console.log('Got : ', id, valPX, valPY, valueGamma);
+        let valueGamma = data.g;
+        let valColR = data.colR;
+        let valColG = data.colG;
+        let valColB = data.colB; 
+        console.log('Got : ', id, valPX, valPY, valueGamma, valColR, valColG, valColB);
 
+        updateColor(`rgb(${valColR}, ${valColG}, ${valColB})`);
+        fill(valColR, valColG, valColB);
         ellipse(valPX, valPY, 20, 20);
     }
 
@@ -52,8 +69,13 @@ ws.onmessage = function (event)
         let id = data.id;
         let valX = data.x;
         let valY = data.y;
-        console.log('Got : ', id, valX, valY);
+        let valColR = data.colR;
+        let valColG = data.colG;
+        let valColB = data.colB; 
+        console.log('Got : ', id, valX, valY, valColR, valColG, valColB);
 
+        updateColor(`rgb(${valColR}, ${valColG}, ${valColB})`);
+        fill(valColR, valColG, valColB);
         ellipse(valX, valY, 20, 20);
     }
 };
@@ -113,18 +135,18 @@ if (isMobile)
 
         // Update velocity according to how tilted the phone is
         // Since phones are narrower than they are long, double the increase to the x velocity
-        vx += leftToRight_degrees * updateRate * 2; 
-        vy += frontToBack_degrees * updateRate;
+        vx += leftToRight_degrees * updateRate * 0.5; 
+        vy += frontToBack_degrees * updateRate * 0.1;
 
         // Update position and clip it to bounds
-        px += vx * 0.5;
+        px += vx * 0.2;
         if (px > width || px < 0) 
         { 
             px = Math.max(0, Math.min(w, px)); // Clip px between 0-398
             vx = 0;
         }
 
-        py += vy * 0.5;
+        py += vy * 0.2;
         if (py > height || py < 0) 
         {
             py = Math.max(0, Math.min(h, py)); // Clip py between 0-398
@@ -138,6 +160,9 @@ if (isMobile)
             'px': px,
             'py': py,
             'g': leftToRight_degrees,
+            'colR' : colR,
+            'colG' : colG,
+            'colB' : colB,
           })
         );
     }
@@ -218,11 +243,16 @@ function draw()
 
     if(mobile)
     {
+        updateColor(`rgb(${valColR}, ${valColG}, ${valColB})`);
+        fill(colR, colG, colB);
         ellipse(px, py, 50, 50);
     }
 
     else if (!mobile && isDragging)
     {
+        updateColor(`rgb(${valColR}, ${valColG}, ${valColB})`);
+        fill(colR, colG, colB);
         ellipse(x, y, 50, 50);
     }
 }
+
