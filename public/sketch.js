@@ -248,13 +248,13 @@ function draw()
 {
     if(mobile)
     {
-        fill((red.value() + green.value() + blue.value())); // Use ellipseColor for fill color
+        fill(red.value(), green.value(), blue.value()); // Use ellipseColor for fill color
         ellipse(px, py, 50, 50);
     }
 
     else if (!mobile && isDragging)
     {
-        fill((red.value() + green.value() + blue.value())); // Use ellipseColor for fill color
+        fill(red.value(), green.value(), blue.value()); // Use ellipseColor for fill color
         ellipse(x, y, 50, 50);
     }
 }
