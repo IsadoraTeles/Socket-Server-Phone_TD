@@ -6,8 +6,29 @@ html, body {
     display: block;
   }
 
+  #color-sliders {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+  }
+
+  .slider {
+    width: 20%;
+  }
+
   #sensor-button {
-    width: 300px;
-    height: 100px;
-    font-size: 40px;
+    display: block;
+    width: 200px;
+    height: 50px;
+    margin: 20px auto;
+    font-size: 20px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  #sensor-button:hover {
+    background-color: #45a049;
   }

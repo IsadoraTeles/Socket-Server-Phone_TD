@@ -20,6 +20,9 @@ let red;
 let green;
 let blue;
 
+let redSlider, greenSlider, blueSlider;
+let colorR = 127, colorG = 127, colorB = 127;
+
 let w = 1000;
 let h = 1000;
 
@@ -120,7 +123,7 @@ if (isMobile)
         rotation_degrees = event.alpha;
         frontToBack_degrees = event.beta;
         leftToRight_degrees = event.gamma;
-        let smoothing_factor = 0.8; // Adjust this between 0 (no smoothing) and 1 (maximum smoothing)
+        let smoothing_factor = 0.2; // Adjust this between 0 (no smoothing) and 1 (maximum smoothing)
 
         // Calculate the new velocities and apply smoothing
         let new_vx = leftToRight_degrees * updateRate * 0.5;
@@ -150,9 +153,9 @@ if (isMobile)
             'px': px,
             'py': py,
             'g': leftToRight_degrees,
-            'red' : red.value(),
-            'green' : green.value(),
-            'blue' : blue.value()
+            'red' : colorR,
+            'green' : colorG,
+            'blue' : colorB 
           })
         );
     }
@@ -255,9 +258,9 @@ else
                 'id' : clientId , 
                 'x': x, 
                 'y': y,
-                'red' : red.value(),
-                'green' : green.value(),
-                'blue' : blue.value()
+                'red' : colorR,
+                'green' : colorG,
+                'blue' : colorB 
             }));
             console.log('sending : ', clientId, x, y, red.value(), green.value(), blue.value());
         }
@@ -280,33 +283,37 @@ function setup()
     let sliderWidth = window.innerWidth * 0.4;
     let sliderHeight = 20;
 
-    red = createSlider(0, 255, 0);
-    red.style('width', sliderWidth + 'px');
-    red.style('height', sliderHeight + 'px');
-    red.position(6, 10);
-    green = createSlider(0, 255, 0);
-    green.style('width', sliderWidth + 'px');
-    green.style('height', sliderHeight + 'px');
-    green.position(6, 50);
-    blue = createSlider(0, 255, 0);
-    blue.style('width', sliderWidth + 'px');
-    blue.style('height', sliderHeight + 'px');
-    blue.position(6, 90);
+    // get HTML elements
+    redSlider = document.getElementById("red-slider");
+    greenSlider = document.getElementById("green-slider");
+    blueSlider = document.getElementById("blue-slider");
+
+    // event listeners for sliders and button
+    redSlider.addEventListener("input", updateColor);
+    greenSlider.addEventListener("input", updateColor);
+    blueSlider.addEventListener("input", updateColor);
 
     ellipseMode(CENTER);
+}
+
+function updateColor() 
+{
+    colorR = redSlider.value;
+    colorG = greenSlider.value;
+    colorB = blueSlider.value;
 }
   
 function draw() 
 {
     if(mobile)
     {
-        fill(red.value(), green.value(), blue.value()); // Use ellipseColor for fill color
+        fill(colorR, colorG, colorB);
         ellipse(px, py, 50, 50);
     }
 
     else if (!mobile && isDragging)
     {
-        fill(red.value(), green.value(), blue.value()); // Use ellipseColor for fill color
+        fill(colorR, colorG, colorB);
         ellipse(x, y, 50, 50);
     }
 }
