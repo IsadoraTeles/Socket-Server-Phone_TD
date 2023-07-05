@@ -142,7 +142,7 @@ if (isMobile)
             // Calculate the new velocities based on accelerationIncludingGravity
             // Here, we don't multiply by updateRate because acceleration is already a rate of change
             // Also, swap x and y to match screen dimensions, and reverse the direction
-            new_vx = event.accelerationIncludingGravity.x * scale_factor;
+            new_vx = -event.accelerationIncludingGravity.x * scale_factor;
             new_vy = event.accelerationIncludingGravity.y * scale_factor;
         }
 
@@ -254,9 +254,13 @@ else
 {
     mobile = false;
 
+    const canvas = document.getElementById('defaultCanvas0');
+    const canvasRect = canvas.getBoundingClientRect();
+
     document.addEventListener('mousedown', function(event) 
     {
-        isDragging = true;
+        isDragging = checkMouseInsideEllipse(event.clientX, event.clientY);
+        // isDragging = true;
     });
       
     document.addEventListener('mouseup', function(event)
@@ -268,23 +272,45 @@ else
     {
         if (isDragging) 
         {
-            // Get the x and y coordinates of the mouse
-            x = event.clientX;
-            y = event.clientY;
-        
-            //console.log("Mouse clicked at position: x=" + x + ", y=" + y);
-            ws.send(JSON.stringify({
-                'type': 'mouseData', 
-                'id' : clientId , 
-                'x': x, 
-                'y': y,
-                'red' : colorR,
-                'green' : colorG,
-                'blue' : colorB 
-            }));
-            console.log('sending : ', clientId, x, y, red.value(), green.value(), blue.value());
+          // Get the x and y coordinates of the mouse
+          x = event.clientX;
+          y = event.clientY;
+    
+          // Check if the mouse is inside the ellipse
+          if (checkMouseInsideEllipse(x, y)) 
+          {
+            // Update the position of the ellipse
+            px = x;
+            py = y;
+    
+            // Send the updated position to the server
+            ws.send
+            (
+              JSON.stringify
+              ({
+                'type': 'mouseData',
+                'id': clientId,
+                'x': px,
+                'y': py,
+                'red': colorR,
+                'green': colorG,
+                'blue': colorB
+              })
+            );
+          }
         }
-    });
+      });
+
+      function checkMouseInsideEllipse(mouseX, mouseY) 
+      {
+        // Calculate the distance between the mouse position and the center of the ellipse
+        const dx = mouseX - px;
+        const dy = mouseY - py;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+    
+        // Check if the distance is less than the radius of the ellipse
+        return distance < 25; // Assuming the radius of the ellipse is 25
+      }
 }
 
 const sensorButton = document.getElementById('sensor-button');
