@@ -11,7 +11,7 @@ const updateRate = 1/60; // Sensor refresh rate
 
 let rotation_degrees = 0;
 let frontToBack_degrees = 0;
-let gamma = 0;
+let leftToRight_degrees = 0;
 
 var isDragging = false;
 let clientId = 0;
@@ -131,8 +131,8 @@ if (isMobile)
 
     function handleOrientation(event) 
     {
-        let smoothing_factor = 0.8; // Adjust this between 0 (no smoothing) and 1 (maximum smoothing)
-        let scale_factor = 20; // Scale factor for adjusting sensor data range to canvas range
+        let smoothing_factor = 1; // Adjust this between 0 (no smoothing) and 1 (maximum smoothing)
+        let scale_factor = 1; // Scale factor for adjusting sensor data range to canvas range
 
         let new_vx = 0, new_vy = 0;
         
@@ -164,11 +164,6 @@ if (isMobile)
             vy = 0;
         }
 
-        gamma = event.gamma;
-        if(gamma === null)
-        {
-            gamma = 0; // or any fallback value you'd like to use
-        }
 
         ws.send(
           JSON.stringify({
@@ -176,7 +171,7 @@ if (isMobile)
             'id': clientId,
             'px': px,
             'py': py,
-            'g': gamma,
+            'g': leftToRight_degrees,
             'red' : colorR,
             'green' : colorG,
             'blue' : colorB 
