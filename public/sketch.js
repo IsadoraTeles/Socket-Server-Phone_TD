@@ -134,10 +134,16 @@ if (isMobile)
         let smoothing_factor = 0.2; // Adjust this between 0 (no smoothing) and 1 (maximum smoothing)
         let scale_factor = 20; // Scale factor for adjusting sensor data range to canvas range
 
-        // Calculate the new velocities based on accelerationIncludingGravity
-        // Here, we don't multiply by updateRate because acceleration is already a rate of change
-        let new_vx = event.accelerationIncludingGravity.x * scale_factor;
-        let new_vy = event.accelerationIncludingGravity.y * scale_factor;
+        let new_vx = 0, new_vy = 0;
+        
+        // Check if accelerationIncludingGravity is available
+        if(event.accelerationIncludingGravity.x !== null && event.accelerationIncludingGravity.y !== null) 
+        {
+            // Calculate the new velocities based on accelerationIncludingGravity
+            // Here, we don't multiply by updateRate because acceleration is already a rate of change
+            new_vx = event.accelerationIncludingGravity.x * scale_factor;
+            new_vy = event.accelerationIncludingGravity.y * scale_factor;
+        }
 
         // Apply smoothing
         vx = vx * smoothing_factor + new_vx * (1 - smoothing_factor);
@@ -158,13 +164,19 @@ if (isMobile)
             vy = 0;
         }
 
+        let gamma = event.gamma;
+        if(gamma === null)
+        {
+            gamma = 0; // or any fallback value you'd like to use
+        }
+
         ws.send(
           JSON.stringify({
             'type': "sensorData",
             'id': clientId,
             'px': px,
             'py': py,
-            'g': leftToRight_degrees,
+            'g': gamma,
             'red' : colorR,
             'green' : colorG,
             'blue' : colorB 
