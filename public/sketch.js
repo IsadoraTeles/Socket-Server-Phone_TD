@@ -131,14 +131,14 @@ if (isMobile)
 
     function handleOrientation(event) 
     {
-        rotation_degrees = event.alpha;
-        frontToBack_degrees = event.beta;
-        leftToRight_degrees = event.gamma;
+        rotation_degrees = event.rotationRate.alpha;
+        frontToBack_degrees = event.rotationRate.beta;
+        leftToRight_degrees = event.rotationRate.gamma;
         let smoothing_factor = 0.2; // Adjust this between 0 (no smoothing) and 1 (maximum smoothing)
 
         // Calculate the new velocities and apply smoothing
-        let new_vx = leftToRight_degrees * updateRate * 0.5;
-        let new_vy = frontToBack_degrees * updateRate;
+        let new_vx = event.accelerationIncludingGravity.x * updateRate * 0.5;
+        let new_vy = event.accelerationIncludingGravity.y * updateRate;
         vx = vx * smoothing_factor + new_vx * (1 - smoothing_factor);
         vy = vy * smoothing_factor + new_vy * (1 - smoothing_factor);
 
@@ -217,22 +217,22 @@ if (isMobile)
     {
         if 
         (
-        typeof DeviceOrientationEvent !== "undefined" &&
-        typeof DeviceOrientationEvent.requestPermission === "function"
+        typeof DeviceMotionEvent !== "undefined" &&
+        typeof DeviceMotionEvent.requestPermission === "function"
         ) 
         {
             // iOS 13+
-            DeviceOrientationEvent.requestPermission().then((response) => 
+            DeviceMotionEvent.requestPermission().then((response) => 
             {
                 if (response == "granted") 
                 {
-                window.addEventListener("deviceorientation", handleOrientation);
+                window.addEventListener("devicemotion", handleOrientation);
                 }
             });
         } 
         else 
         {
-            window.addEventListener("deviceorientation", handleOrientation);
+            window.addEventListener("devicemotion", handleOrientation);
         }
     }
     
