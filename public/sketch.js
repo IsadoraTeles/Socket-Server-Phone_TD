@@ -84,21 +84,32 @@ ws.onclose = function ()
   ws.send(JSON.stringify({'type': 'clientOUT', 'id' : clientId}));
 };
 
-// Listen for changes in page visibility
-document.addEventListener('visibilitychange', function() 
+// Page Visibility API
+function handleVisibilityChange() 
 {
-    if (!isPageVisible()) 
+    if (document.hidden) 
     {
-      // If the page is not visible, close the socket connection
-      ws.send(JSON.stringify({'type': 'clientOUT', 'id' : clientId}));
-      ws.close();
+        // Page is hidden, send 'clientOUT'
+        ws.send(JSON.stringify({'type': 'clientOUT', 'id' : clientId}));
     } 
     else 
     {
-      // If the page is visible, reconnect to the socket server
-      connect();
+        // Page is visible again, reconnect if necessary
+        if (ws.readyState === WebSocket.CLOSED) 
+        {
+            ws = new WebSocket('wss://phone-td.onrender.com:443');
+        }
     }
-}, false);
+}
+
+document.addEventListener('visibilitychange', handleVisibilityChange, false);
+
+// beforeunload event
+window.addEventListener('beforeunload', (event) => 
+{
+    // Send 'clientOUT' before the window closes
+    ws.send(JSON.stringify({'type': 'clientOUT', 'id' : clientId}));
+});
   
 ws.addEventListener('message', (event) => 
 {
