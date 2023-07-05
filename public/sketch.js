@@ -130,54 +130,54 @@ if (isMobile)
     mobile = true;
 
     function handleOrientation(event) 
-{
-    let smoothing_factor = 0.1; // Adjust this between 0 (no smoothing) and 1 (maximum smoothing)
-    let scale_factor = 0.1; // Scale factor for adjusting sensor data range to canvas range
-
-    let new_vx = 0, new_vy = 0;
-    
-    // Check if accelerationIncludingGravity is available
-    if(event.accelerationIncludingGravity.x !== null && event.accelerationIncludingGravity.y !== null) 
     {
-        // Calculate the new velocities based on accelerationIncludingGravity
-        // Here, we don't multiply by updateRate because acceleration is already a rate of change
-        // Also, swap x and y to match screen dimensions, and reverse the direction
-        new_vx = -event.accelerationIncludingGravity.y * scale_factor;
-        new_vy = event.accelerationIncludingGravity.x * scale_factor;
+        let smoothing_factor = 0.8; // Adjust this between 0 (no smoothing) and 1 (maximum smoothing)
+        let scale_factor = 10; // Scale factor for adjusting sensor data range to canvas range
+
+        let new_vx = 0, new_vy = 0;
+        
+        // Check if accelerationIncludingGravity is available
+        if(event.accelerationIncludingGravity.x !== null && event.accelerationIncludingGravity.y !== null) 
+        {
+            // Calculate the new velocities based on accelerationIncludingGravity
+            // Here, we don't multiply by updateRate because acceleration is already a rate of change
+            // Also, swap x and y to match screen dimensions, and reverse the direction
+            new_vx = -event.accelerationIncludingGravity.y * scale_factor;
+            new_vy = -event.accelerationIncludingGravity.x * scale_factor;
+        }
+
+        // Apply smoothing
+        vx = vx * smoothing_factor + new_vx * (1 - smoothing_factor);
+        vy = vy * smoothing_factor + new_vy * (1 - smoothing_factor);
+
+        // Update position and clip it to bounds
+        px += vx;
+        if (px > width || px < 0) 
+        { 
+            px = Math.max(0, Math.min(w, px)); // Clip px between 0-398
+            vx = 0;
+        }
+
+        py += vy;
+        if (py > height || py < 0) 
+        {
+            py = Math.max(0, Math.min(h, py)); // Clip py between 0-398
+            vy = 0;
+        }
+
+        ws.send(
+        JSON.stringify({
+            'type': "sensorData",
+            'id': clientId,
+            'px': px,
+            'py': py,
+            'g': leftToRight_degrees,
+            'red' : colorR,
+            'green' : colorG,
+            'blue' : colorB 
+        })
+        );
     }
-
-    // Apply smoothing
-    vx = vx * smoothing_factor + new_vx * (1 - smoothing_factor);
-    vy = vy * smoothing_factor + new_vy * (1 - smoothing_factor);
-
-    // Update position and clip it to bounds
-    px += vx;
-    if (px > width || px < 0) 
-    { 
-        px = Math.max(0, Math.min(w, px)); // Clip px between 0-398
-        vx = 0;
-    }
-
-    py += vy;
-    if (py > height || py < 0) 
-    {
-        py = Math.max(0, Math.min(h, py)); // Clip py between 0-398
-        vy = 0;
-    }
-
-    ws.send(
-      JSON.stringify({
-        'type': "sensorData",
-        'id': clientId,
-        'px': px,
-        'py': py,
-        'g': leftToRight_degrees,
-        'red' : colorR,
-        'green' : colorG,
-        'blue' : colorB 
-      })
-    );
-}
 
 
     // function handleOrientation(event) 
