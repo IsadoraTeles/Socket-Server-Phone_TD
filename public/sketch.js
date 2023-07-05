@@ -260,7 +260,7 @@ else
     document.addEventListener('mousedown', function(event) 
     {
         isDragging = checkMouseInsideEllipse(event.clientX, event.clientY);
-        // isDragging = true;
+        isDragging = true;
     });
       
     document.addEventListener('mouseup', function(event)
