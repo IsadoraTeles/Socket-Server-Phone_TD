@@ -131,19 +131,20 @@ if (isMobile)
 
     function handleOrientation(event) 
     {
-        rotation_degrees = event.rotationRate.alpha;
-        frontToBack_degrees = event.rotationRate.beta;
-        leftToRight_degrees = event.rotationRate.gamma;
         let smoothing_factor = 0.2; // Adjust this between 0 (no smoothing) and 1 (maximum smoothing)
+        let scale_factor = 20; // Scale factor for adjusting sensor data range to canvas range
 
-        // Calculate the new velocities and apply smoothing
-        let new_vx = event.accelerationIncludingGravity.x * updateRate * 0.5;
-        let new_vy = event.accelerationIncludingGravity.y * updateRate;
+        // Calculate the new velocities based on accelerationIncludingGravity
+        // Here, we don't multiply by updateRate because acceleration is already a rate of change
+        let new_vx = event.accelerationIncludingGravity.x * scale_factor;
+        let new_vy = event.accelerationIncludingGravity.y * scale_factor;
+
+        // Apply smoothing
         vx = vx * smoothing_factor + new_vx * (1 - smoothing_factor);
         vy = vy * smoothing_factor + new_vy * (1 - smoothing_factor);
 
         // Update position and clip it to bounds
-        px += vx * 0.2;
+        px += vx;
         if (px > width || px < 0) 
         { 
             px = Math.max(0, Math.min(w, px)); // Clip px between 0-398
