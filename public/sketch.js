@@ -120,11 +120,13 @@ if (isMobile)
         rotation_degrees = event.alpha;
         frontToBack_degrees = event.beta;
         leftToRight_degrees = event.gamma;
+        let smoothing_factor = 0.8; // Adjust this between 0 (no smoothing) and 1 (maximum smoothing)
 
-        // Update velocity according to how tilted the phone is
-        // Since phones are narrower than they are long, double the increase to the x velocity
-        vx += leftToRight_degrees * updateRate * 0.5; 
-        vy += frontToBack_degrees * updateRate * 0.1;
+        // Calculate the new velocities and apply smoothing
+        let new_vx = leftToRight_degrees * updateRate * 0.5;
+        let new_vy = frontToBack_degrees * updateRate;
+        vx = vx * smoothing_factor + new_vx * (1 - smoothing_factor);
+        vy = vy * smoothing_factor + new_vy * (1 - smoothing_factor);
 
         // Update position and clip it to bounds
         px += vx * 0.2;
@@ -155,7 +157,48 @@ if (isMobile)
         );
     }
 
+    // function handleOrientation(event) 
+    // {
+    //     rotation_degrees = event.alpha;
+    //     frontToBack_degrees = event.beta;
+    //     leftToRight_degrees = event.gamma;
+
+    //     // Update velocity according to how tilted the phone is
+    //     // Since phones are narrower than they are long, double the increase to the x velocity
+    //     vx += leftToRight_degrees * updateRate * 0.5; 
+    //     vy += frontToBack_degrees * updateRate;
+
+    //     // Update position and clip it to bounds
+    //     px += vx * 0.2;
+    //     if (px > width || px < 0) 
+    //     { 
+    //         px = Math.max(0, Math.min(w, px)); // Clip px between 0-398
+    //         vx = 0;
+    //     }
+
+    //     py += vy * 0.2;
+    //     if (py > height || py < 0) 
+    //     {
+    //         py = Math.max(0, Math.min(h, py)); // Clip py between 0-398
+    //         vy = 0;
+    //     }
+
+    //     ws.send(
+    //       JSON.stringify({
+    //         'type': "sensorData",
+    //         'id': clientId,
+    //         'px': px,
+    //         'py': py,
+    //         'g': leftToRight_degrees,
+    //         'red' : red.value(),
+    //         'green' : green.value(),
+    //         'blue' : blue.value()
+    //       })
+    //     );
+    // }
+
     // Request permission to use device sensor
+    
     function requestSensorPermission() 
     {
         if 
@@ -234,11 +277,20 @@ function setup()
     createCanvas(w, h);
     background(0);
 
+    let sliderWidth = window.innerWidth * 0.4;
+    let sliderHeight = 20;
+
     red = createSlider(0, 255, 0);
+    red.style('width', sliderWidth + 'px');
+    red.style('height', sliderHeight + 'px');
     red.position(6, 10);
     green = createSlider(0, 255, 0);
+    green.style('width', sliderWidth + 'px');
+    green.style('height', sliderHeight + 'px');
     green.position(6, 50);
     blue = createSlider(0, 255, 0);
+    blue.style('width', sliderWidth + 'px');
+    blue.style('height', sliderHeight + 'px');
     blue.position(6, 90);
 
     ellipseMode(CENTER);

@@ -118,9 +118,7 @@ const keepServerAlive = () =>
 };
 
 
-app.get('/', (req, res) => 
-{
-    res.send('Hello World!');
+app.get('/', function(req, res) {
+  res.sendFile(__dirname + '/public/index.html');
 });
-
 
