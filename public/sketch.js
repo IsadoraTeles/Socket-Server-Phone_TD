@@ -132,7 +132,7 @@ if (isMobile)
     function handleOrientation(event) 
     {
         let smoothing_factor = 0.8; // Adjust this between 0 (no smoothing) and 1 (maximum smoothing)
-        let scale_factor = 10; // Scale factor for adjusting sensor data range to canvas range
+        let scale_factor = 1; // Scale factor for adjusting sensor data range to canvas range
 
         let new_vx = 0, new_vy = 0;
         
@@ -142,8 +142,8 @@ if (isMobile)
             // Calculate the new velocities based on accelerationIncludingGravity
             // Here, we don't multiply by updateRate because acceleration is already a rate of change
             // Also, swap x and y to match screen dimensions, and reverse the direction
-            new_vx = -event.accelerationIncludingGravity.y * scale_factor;
-            new_vy = -event.accelerationIncludingGravity.x * scale_factor;
+            new_vx = event.accelerationIncludingGravity.x * scale_factor;
+            new_vy = event.accelerationIncludingGravity.y * scale_factor;
         }
 
         // Apply smoothing
