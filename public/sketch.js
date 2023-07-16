@@ -277,8 +277,8 @@ else
           y = event.clientY;
     
           // Check if the mouse is inside the ellipse
-          if (checkMouseInsideEllipse(x, y)) 
-          {
+        //   if (checkMouseInsideEllipse(x, y)) 
+        //   {
             // Update the position of the ellipse
             px = x;
             py = y;
@@ -297,7 +297,7 @@ else
                 'blue': colorB
               })
             );
-          }
+        //   }
         }
       });
 
@@ -309,7 +309,7 @@ else
         const distance = Math.sqrt(dx * dx + dy * dy);
     
         // Check if the distance is less than the radius of the ellipse
-        return distance < 15; // Assuming the radius of the ellipse is 25
+        return distance < 20; // Assuming the radius of the ellipse is 25
       }
 }
 
