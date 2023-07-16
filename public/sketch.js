@@ -1,7 +1,7 @@
 const ws = new WebSocket('wss://phone-td.onrender.com:443');
 
-let px = 50; // Position x and y
-let py = 50;
+let px = 25; // Position x and y
+let py = 25;
 let vx = 0.0; // Velocity x and y
 let vy = 0.0;
 let x = 0.0;
@@ -23,8 +23,8 @@ let blue;
 let redSlider, greenSlider, blueSlider;
 let colorR = 127, colorG = 127, colorB = 127;
 
-let w = 1000;
-let h = 1000;
+let w = 500;
+let h = 500;
 
 
 ws.onopen = function () 
@@ -56,7 +56,7 @@ ws.onmessage = function (event)
         console.log('Got : ', id, valPX, valPY, valueGamma, valColR, valColG, valColB);
 
         fill(valColR, valColG, valColB); // Use ellipseColor for fill color
-        ellipse(valPX, valPY, 20, 20);
+        ellipse(valPX, valPY, 15, 15);
       }
     
       if (data.type === 'mouseData') {
@@ -69,7 +69,7 @@ ws.onmessage = function (event)
         console.log('Got : ', id, valX, valY, valColR, valColG, valColB);
 
         fill(valColR, valColG, valColB); // Use ellipseColor for fill color
-        ellipse(valX, valY, 20, 20);
+        ellipse(valX, valY, 15, 15);
       }
 };
 
@@ -327,7 +327,7 @@ function setup()
     background(0);
 
     let sliderWidth = window.innerWidth * 0.4;
-    let sliderHeight = 20;
+    let sliderHeight = 60;
 
     // get HTML elements
     redSlider = document.getElementById("red-slider");
@@ -354,13 +354,13 @@ function draw()
     if(mobile)
     {
         fill(colorR, colorG, colorB);
-        ellipse(px, py, 50, 50);
+        ellipse(px, py, 25, 25);
     }
 
     else if (!mobile && isDragging)
     {
         fill(colorR, colorG, colorB);
-        ellipse(x, y, 50, 50);
+        ellipse(x, y, 25, 25);
     }
 }
 
