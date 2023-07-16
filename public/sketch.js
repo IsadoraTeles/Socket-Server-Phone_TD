@@ -23,8 +23,8 @@ let blue;
 let redSlider, greenSlider, blueSlider;
 let colorR = 127, colorG = 127, colorB = 127;
 
-let w = 500;
-let h = 500;
+let w = 1000;
+let h = 1000;
 
 
 ws.onopen = function () 
