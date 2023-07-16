@@ -131,8 +131,8 @@ if (isMobile)
 
     function handleOrientation(event) 
     {
-        let smoothing_factor = 0.8; // Adjust this between 0 (no smoothing) and 1 (maximum smoothing)
-        let scale_factor = 1; // Scale factor for adjusting sensor data range to canvas range
+        let smoothing_factor = 0.9; // Adjust this between 0 (no smoothing) and 1 (maximum smoothing)
+        let scale_factor = 0.8; // Scale factor for adjusting sensor data range to canvas range
 
         let new_vx = 0, new_vy = 0;
         
@@ -254,8 +254,8 @@ else
 {
     mobile = false;
 
-    const canvas = document.getElementById('defaultCanvas0');
-    const canvasRect = canvas.getBoundingClientRect();
+    //const canvas = document.getElementById('defaultCanvas0');
+    //const canvasRect = canvas.getBoundingClientRect();
 
     document.addEventListener('mousedown', function(event) 
     {
@@ -309,7 +309,7 @@ else
         const distance = Math.sqrt(dx * dx + dy * dy);
     
         // Check if the distance is less than the radius of the ellipse
-        return distance < 25; // Assuming the radius of the ellipse is 25
+        return distance < 50; // Assuming the radius of the ellipse is 25
       }
 }
 
