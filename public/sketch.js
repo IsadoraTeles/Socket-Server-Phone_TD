@@ -277,8 +277,8 @@ else
           y = event.clientY;
     
           // Check if the mouse is inside the ellipse
-          if (checkMouseInsideEllipse(x, y)) 
-          {
+        //   if (checkMouseInsideEllipse(x, y)) 
+        //   {
             // Update the position of the ellipse
             px = x;
             py = y;
@@ -297,7 +297,7 @@ else
                 'blue': colorB
               })
             );
-          }
+        //   }
         }
       });
 
