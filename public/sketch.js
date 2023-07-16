@@ -326,8 +326,8 @@ function setup()
     createCanvas(w, h);
     background(0);
 
-    let sliderWidth = window.innerWidth * 0.4;
-    let sliderHeight = 60;
+    // let sliderWidth = window.innerWidth * 0.4;
+    // let sliderHeight = 60;
 
     // get HTML elements
     redSlider = document.getElementById("red-slider");

@@ -9,11 +9,12 @@ html, body {
   #color-sliders {
     display: flex;
     justify-content: space-around;
-    margin: 20px 0;
+    margin: 40px 40px;
   }
 
   .slider {
     width: 40%;
+    height: 40%;
   }
 
   #sensor-button {
