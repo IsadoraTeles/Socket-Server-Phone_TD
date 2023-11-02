@@ -15,13 +15,13 @@ const updateRate = 1/60; // Sensor refresh rate
 var isDragging = false;
 let clientId = 0;
 
-// let colorR = Math.floor(Math.random() * 256);
-// let colorG = Math.floor(Math.random() * 256);
-// let colorB = Math.floor(Math.random() * 256);
+let colorR = Math.floor(Math.random() * 256);
+let colorG = Math.floor(Math.random() * 256);
+let colorB = Math.floor(Math.random() * 256);
 
-let colorR = 255;
-let colorG = 255;
-let colorB = 255;
+// let colorR = 255;
+// let colorG = 255;
+// let colorB = 255;
  
 let canvas;
 let isMouseOverEllipse = false;
@@ -327,9 +327,11 @@ function draw()
 
     else 
     {
-        
-        fill(colorR, colorG, colorB);
-        ellipse(px, py, 25, 25);
+        if(isDragging)
+        {
+            fill(colorR, colorG, colorB);
+            ellipse(px, py, 25, 25);
+        }
     }
 }
 
