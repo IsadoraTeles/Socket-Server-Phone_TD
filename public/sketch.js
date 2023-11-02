@@ -298,7 +298,7 @@ function setup()
   
 function draw() 
 {
-    background(0); // Clear the canvas on each draw cycle
+    //background(0); // Clear the canvas on each draw cycle
   
     if(mobile) 
     {
