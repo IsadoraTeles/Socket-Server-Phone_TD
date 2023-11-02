@@ -24,6 +24,7 @@ let colorG = 255;
 let colorB = 255;
  
 let canvas;
+
 let isMouseOverEllipse = false;
 
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -224,11 +225,11 @@ else
         }
     });
       
-    canvas.elt.addEventListener('mousemove', function(event) 
+    canvas.canvas.addEventListener('mousemove', function(event) 
     {
         if (isMouseOverEllipse || isDragging) 
         {
-          const canvasRect = canvas.elt.getBoundingClientRect();
+          const canvasRect = canvas.canvas.getBoundingClientRect();
           x = event.clientX - canvasRect.left;
           y = event.clientY - canvasRect.top;
           
@@ -250,17 +251,17 @@ else
         }
       });
       
-      canvas.elt.addEventListener('mouseup', function(event) 
+      canvas.canvas.addEventListener('mouseup', function(event) 
       {
         isDragging = false;
       });
     
-      canvas.elt.addEventListener('mouseover', function(event) 
+      canvas.canvas.addEventListener('mouseover', function(event) 
       {
         isMouseOverEllipse = true;
       });
     
-      canvas.elt.addEventListener('mouseout', function(event) 
+      canvas.canvas.addEventListener('mouseout', function(event) 
       {
         isMouseOverEllipse = false;
       });
