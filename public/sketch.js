@@ -193,7 +193,7 @@ if (isMobile)
             'id': clientId,
             'px': px,
             'py': py,
-            'g': leftToRight_degrees,
+            'g': 0,
             'red' : colorR,
             'green' : colorG,
             'blue' : colorB 
@@ -324,17 +324,28 @@ function setup()
   
 function draw() 
 {
-    //background(0); // Clear the canvas on each draw cycle
-  
-    if(mobile)
+    if(mobile) 
     {
         fill(colorR, colorG, colorB);
         ellipse(px, py, 25, 25);
     }
-    else if (!mobile && isDragging)
+    
+    else 
     {
-        fill(colorR, colorG, colorB);
-        ellipse(x, y, 25, 25);
+        if (!isDragging) 
+        {
+            fill(0, 10);
+            rect(0, 0, width, height);
+            
+            vx *= 0.95;
+            vy *= 0.95;
+            
+            px += vx;
+            py += vy;
+            
+            fill(colorR, colorG, colorB);
+            ellipse(px, py, 25, 25);
+        }
     }
 }
 
