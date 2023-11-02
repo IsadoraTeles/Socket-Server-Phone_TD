@@ -97,8 +97,8 @@ function handleMouseData(data)
     let valColB = data.blue;
 
     console.log('Got : ', id, valX, valY, valColR, valColG, valColB);
-    let mappedX = mapValue(valX, 0, 1024, 0, width);
-    let mappedY = mapValue(valY, 0, 576, 0, height);
+    let mappedX = mapValue(valX, 0, 512, 0, width);
+    let mappedY = mapValue(valY, 0, 288, 0, height);
 
     // Use mappedX and mappedY for drawing
     fill(valColR, valColG, valColB);
@@ -161,9 +161,9 @@ if (isMobile)
 
     function handleOrientation(event) 
     {
-        let smoothing_factor = 0.2; // Adjust this between 0 (no smoothing) and 1 (maximum smoothing)
+        let smoothing_factor = 0.1; // Adjust this between 0 (no smoothing) and 1 (maximum smoothing)
         let scale_factor = 0.5; // Scale factor for adjusting sensor data range to canvas range
-        let damping_factor = 0.99; // Damping factor to gradually reduce velocity
+        let damping_factor = 1; // Damping factor to gradually reduce velocity
 
         let new_vx = 0, new_vy = 0;
 
