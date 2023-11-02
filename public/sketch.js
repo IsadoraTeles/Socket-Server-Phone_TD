@@ -212,58 +212,47 @@ else
 
     document.addEventListener('mousedown', function(event) 
     {
-        isDragging = checkMouseInsideEllipse(event.clientX, event.clientY);
-        isDragging = true;
-    });
+        const canvasRect = canvas.elt.getBoundingClientRect();
+        if (checkMouseInsideEllipse(event.clientX - canvasRect.left, event.clientY - canvasRect.top)) 
+        {
+          isDragging = true;
+        }
+      });
       
-    document.addEventListener('mouseup', function(event)
-    {
-        isDragging = false;
-    });
-
     document.addEventListener('mousemove', function(event) 
     {
         if (isDragging) 
         {
-          // Get the x and y coordinates of the mouse
-          x = event.clientX;
-          y = event.clientY;
-    
-          // Check if the mouse is inside the ellipse
-        //   if (checkMouseInsideEllipse(x, y)) 
-        //   {
-            // Update the position of the ellipse
-            px = x;
-            py = y;
-    
-            // Send the updated position to the server
-            ws.send
-            (
-              JSON.stringify
-              ({
-                'type': 'mouseData',
-                'id': clientId,
-                'x': px,
-                'y': py,
-                'red': colorR,
-                'green': colorG,
-                'blue': colorB
-              })
-            );
-        //   }
+            const canvasRect = canvas.elt.getBoundingClientRect();
+            x = event.clientX - canvasRect.left;
+            y = event.clientY - canvasRect.top;
+            ws.send(JSON.stringify(
+                {
+            'type': 'mouseData',
+            'id': clientId,
+            'x': x,
+            'y': y,
+            'red': colorR,
+            'green': colorG,
+            'blue': colorB
+            }
+            ));
         }
-      });
+    });
+      
+    document.addEventListener('mouseup', function(event) 
+    {
+        isDragging = false;
+    });
 
-      function checkMouseInsideEllipse(mouseX, mouseY) 
-      {
-        // Calculate the distance between the mouse position and the center of the ellipse
+     // Corrected checkMouseInsideEllipse function
+    function checkMouseInsideEllipse(mouseX, mouseY) 
+    {
         const dx = mouseX - px;
         const dy = mouseY - py;
         const distance = Math.sqrt(dx * dx + dy * dy);
-    
-        // Check if the distance is less than the radius of the ellipse
-        return distance < 20; // Assuming the radius of the ellipse is 25
-      }
+        return distance < 12.5; // Considering the radius of the ellipse is 12.5 (half of 25)
+    }
 }
 
 const sensorButton = document.getElementById('sensor-button');
@@ -278,26 +267,33 @@ function setup()
 {
     let canvasSizeW = windowWidth * 0.7;  // 70% of the window width
     let canvasSizeH = windowHeight * 0.7;  // 70% of the window height
-    canvas = createCanvas(canvasSizeW, canvasSizeH);
-    canvas.position((windowWidth - width) / 2, (windowHeight - height) / 2);
-    background(0);
 
+    canvas = createCanvas(canvasSizeW, canvasSizeH);
+    canvas.parent('canvas-container'); // Attach the canvas to the container div
+    background(0);
+    
     ellipseMode(CENTER);
 }
 
   
 function draw() 
 {
-    if(mobile)
+    background(0); // Clear the canvas on each draw cycle
+  
+    if(mobile) 
     {
+        // For mobile, we directly use px and py for ellipse position
         fill(colorR, colorG, colorB);
         ellipse(px, py, 25, 25);
-    }
-
-    else if (!mobile && isDragging)
+    } 
+    else 
     {
+        // For desktop, we only draw when dragging is true
+        if (isDragging) 
+        {
         fill(colorR, colorG, colorB);
         ellipse(x, y, 25, 25);
+        }
     }
 }
 

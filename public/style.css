@@ -37,3 +37,15 @@ button {
   padding: 0.5em 1em;
   cursor: pointer;
 }
+
+#content {
+  text-align: center;
+}
+
+#info {
+  margin-bottom: 20px; /* Adjust as needed */
+}
+
+#canvas-container {
+  display: inline-block; /* Aligns the canvas with the text */
+}
