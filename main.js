@@ -55,6 +55,7 @@ wss.on("connection", function (ws, req)
         return;
       }
 
+      console.log(JSON.stringify(parsedData));
       broadcast(ws, JSON.stringify(parsedData), false);
     } 
 

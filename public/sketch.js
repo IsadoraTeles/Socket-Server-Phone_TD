@@ -24,6 +24,7 @@ let colorG = 255;
 let colorB = 255;
  
 let canvas;
+let isMouseOverEllipse = false;
 
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
@@ -35,64 +36,41 @@ ws.onopen = function ()
 
 ws.onmessage = function (event) 
 {
-    try 
+    let data = JSON.parse(event.data);
+    let stringifiedData = data.toString();
+
+    if(stringifiedData === 'ping') 
     {
-        const data = JSON.parse(event.data);
-        
-        let stringifiedData = data.toString();
-
-        if(stringifiedData === 'ping') 
-        {
-            ws.send('pong');
-            console.log('got ping, sent pong');
-            return;
-        }
-
-        if (data.type === 'sensorData') 
-        {
-            let id = data.id;
-            let valPX = data.px;
-            let valPY = data.py;
-            let valueGamma = data.g;
-            let valColR = data.red; 
-            let valColG = data.green;
-            let valColB = data.blue;
-            console.log('Got : ', id, valPX, valPY, valueGamma, valColR, valColG, valColB);
-
-            fill(valColR, valColG, valColB); // Use ellipseColor for fill color
-            ellipse(valPX, valPY, 15, 15);
-        }
-        
-        if (data.type === 'mouseData') 
-        {
-            let id = data.id;
-            let valX = data.x;
-            let valY = data.y;
-            let valColR = data.red; 
-            let valColG = data.green;
-            let valColB = data.blue;
-            console.log('Got : ', id, valX, valY, valColR, valColG, valColB);
-
-            fill(valColR, valColG, valColB); // Use ellipseColor for fill color
-            ellipse(valX, valY, 15, 15);
-        }
-        
-    } 
-
-    catch (error) 
-    {
-        if (event.data === 'ping') 
-        {
-            ws.send('pong');
-            console.log('got ping, sent pong');
-        } 
-
-        else 
-        {
-            console.error('Error parsing JSON:', error);
-        }
+        ws.send('pong');
+        console.log('got ping, sent pong');
+        return;
     }
+    if (data.type === 'sensorData') 
+    {
+        let id = data.id;
+        let valPX = data.px;
+        let valPY = data.py;
+        let valueGamma = data.g;
+        let valColR = data.red; 
+        let valColG = data.green;
+        let valColB = data.blue;
+        console.log('Got : ', id, valPX, valPY, valueGamma, valColR, valColG, valColB);
+        fill(valColR, valColG, valColB); // Use ellipseColor for fill color
+        ellipse(valPX, valPY, 15, 15);
+      }
     
+      if (data.type === 'mouseData') 
+      {
+        let id = data.id;
+        let valX = data.x;
+        let valY = data.y;
+        let valColR = data.red; 
+        let valColG = data.green;
+        let valColB = data.blue;
+        console.log('Got : ', id, valX, valY, valColR, valColG, valColB);
+        fill(valColR, valColG, valColB); // Use ellipseColor for fill color
+        ellipse(valX, valY, 15, 15);
+      }
 };
 
 ws.onerror = function (error) 
@@ -232,49 +210,60 @@ else
 {
     mobile = false;
 
-    //const canvas = document.getElementById('defaultCanvas0');
-    //const canvasRect = canvas.getBoundingClientRect();
-
     document.addEventListener('mousedown', function(event) 
     {
         const canvasRect = canvas.elt.getBoundingClientRect();
         const mouseX = event.clientX - canvasRect.left;
         const mouseY = event.clientY - canvasRect.top;
+        
         if (checkMouseInsideEllipse(mouseX, mouseY)) 
         {
-          isDragging = true;
-          x = mouseX;
-          y = mouseY;
+            isDragging = true;
+            x = mouseX;
+            y = mouseY;
         }
     });
       
-    document.addEventListener('mousemove', function(event) 
+    canvas.elt.addEventListener('mousemove', function(event) 
     {
-        if (isDragging) 
+        if (isMouseOverEllipse || isDragging) 
         {
           const canvasRect = canvas.elt.getBoundingClientRect();
           x = event.clientX - canvasRect.left;
           y = event.clientY - canvasRect.top;
-          ws.send(JSON.stringify(
-            {
-            'type': 'mouseData',
-            'id': clientId,
-            'x': x,
-            'y': y,
-            'red': colorR,
-            'green': colorG,
-            'blue': colorB
-          }));
-
+          
+          if (isDragging) 
+          {
+            ws.send(JSON.stringify({
+              'type': 'mouseData',
+              'id': clientId,
+              'x': x,
+              'y': y,
+              'red': colorR,
+              'green': colorG,
+              'blue': colorB
+            }));
+            
             fill(colorR, colorG, colorB);
             ellipse(x, y, 25, 25);
+          }
         }
       });
       
-    document.addEventListener('mouseup', function(event) 
-    {
+      canvas.elt.addEventListener('mouseup', function(event) 
+      {
         isDragging = false;
-    });
+      });
+    
+      canvas.elt.addEventListener('mouseover', function(event) 
+      {
+        isMouseOverEllipse = true;
+      });
+    
+      canvas.elt.addEventListener('mouseout', function(event) 
+      {
+        isMouseOverEllipse = false;
+      });
 
     function checkMouseInsideEllipse(mouseX, mouseY) 
     {
@@ -300,6 +289,9 @@ function setup()
     background(0);
     
     ellipseMode(CENTER);
+    // Draw the ellipse once at the start
+    fill(colorR, colorG, colorB);
+    ellipse(px, py, 25, 25);
 }
 
   
@@ -315,11 +307,10 @@ function draw()
     } 
     else 
     {
-        // For desktop, we only draw when dragging is true
-        if (isDragging) 
+        if (isMouseOverEllipse || isDragging) 
         {
-        fill(colorR, colorG, colorB);
-        ellipse(x, y, 25, 25);
+            fill(colorR, colorG, colorB);
+            ellipse(x, y, 25, 25);
         }
     }
 }
