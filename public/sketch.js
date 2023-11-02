@@ -327,7 +327,7 @@ sensorButton.addEventListener('click', function()
 
 function setup() 
 {
-    canvas = createCanvas(512, 288);
+    canvas = createCanvas(288, 512);
 
     canvas.parent('canvas-container'); // Attach the canvas to the container div
     background(0);
