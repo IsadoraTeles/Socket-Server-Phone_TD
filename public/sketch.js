@@ -24,9 +24,7 @@ let colorG = 255;
 let colorB = 255;
  
 let canvas;
-
 let isMouseOverEllipse = false;
-
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 ws.onopen = function () 
@@ -84,8 +82,8 @@ function handleSensorData(data)
 function handleMouseData(data) 
 {
     let id = data.id;
-    let valX = data.x;
-    let valY = data.y;
+    let valX = data.px;
+    let valY = data.py;
     let valColR = data.red;
     let valColG = data.green;
     let valColB = data.blue;
@@ -94,7 +92,6 @@ function handleMouseData(data)
     fill(valColR, valColG, valColB);
     ellipse(valX, valY, 15, 15);
 }
-
 
 ws.onerror = function (error) 
 {
@@ -243,8 +240,8 @@ else
         {
             isDragging = true;
             isMouseOverEllipse = true;
-            x = mouseX;
-            y = mouseY;
+            px = mouseX;
+            py = mouseY;
         }
     }
       
@@ -253,23 +250,23 @@ else
         if (isMouseOverEllipse || isDragging) 
         {
             const canvasRect = canvas.elt.getBoundingClientRect();
-            x = event.clientX - canvasRect.left;
-            y = event.clientY - canvasRect.top;
+            px = event.clientX - canvasRect.left;
+            py = event.clientY - canvasRect.top;
             
             if (isDragging) 
             {
                 ws.send(JSON.stringify({
                     'type': 'mouseData',
                     'id': clientId,
-                    'x': x,
-                    'y': y,
+                    'px': px,
+                    'py': py,
                     'red': colorR,
                     'green': colorG,
                     'blue': colorB
                 }));
                 
                 fill(colorR, colorG, colorB);
-                ellipse(x, y, 25, 25);
+                ellipse(px, py, 25, 25);
             }
         }
     }
@@ -312,7 +309,6 @@ sensorButton.addEventListener('click', function()
     requestSensorPermission();
 });
 
-
 function setup() 
 {
     canvas = createCanvas(windowWidth * 0.7, windowHeight * 0.5);
@@ -321,7 +317,6 @@ function setup()
     fill(255);
 }
 
-  
 function draw() 
 {
     if(mobile) 
@@ -329,23 +324,12 @@ function draw()
         fill(colorR, colorG, colorB);
         ellipse(px, py, 25, 25);
     }
-    
+
     else 
     {
-        if (!isDragging) 
-        {
-            fill(0, 10);
-            rect(0, 0, width, height);
-            
-            vx *= 0.95;
-            vy *= 0.95;
-            
-            px += vx;
-            py += vy;
-            
-            fill(colorR, colorG, colorB);
-            ellipse(px, py, 25, 25);
-        }
+        
+        fill(colorR, colorG, colorB);
+        ellipse(px, py, 25, 25);
     }
 }
 
