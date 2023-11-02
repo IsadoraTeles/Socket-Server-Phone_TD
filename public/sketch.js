@@ -38,9 +38,9 @@ ws.onopen = function ()
 ws.onmessage = function (event) 
 {
     let data = JSON.parse(event.data);
-    let stringifiedData = data.toString();
+    //let stringifiedData = data.toString();
 
-    if(stringifiedData === 'ping') 
+    if(data.type === 'ping') 
     {
         ws.send('pong');
         console.log('got ping, sent pong');
@@ -211,7 +211,7 @@ else
 {
     mobile = false;
 
-    document.addEventListener('mousedown', function(event) 
+    function handleMouseDown(event) 
     {
         const canvasRect = canvas.elt.getBoundingClientRect();
         const mouseX = event.clientX - canvasRect.left;
@@ -220,51 +220,53 @@ else
         if (checkMouseInsideEllipse(mouseX, mouseY)) 
         {
             isDragging = true;
+            isMouseOverEllipse = true;
             x = mouseX;
             y = mouseY;
         }
-    });
+    }
       
-    canvas.canvas.addEventListener('mousemove', function(event) 
+    function handleMouseMove(event) 
     {
         if (isMouseOverEllipse || isDragging) 
         {
-          const canvasRect = canvas.canvas.getBoundingClientRect();
-          x = event.clientX - canvasRect.left;
-          y = event.clientY - canvasRect.top;
-          
-          if (isDragging) 
-          {
-            ws.send(JSON.stringify({
-              'type': 'mouseData',
-              'id': clientId,
-              'x': x,
-              'y': y,
-              'red': colorR,
-              'green': colorG,
-              'blue': colorB
-            }));
+            const canvasRect = canvas.elt.getBoundingClientRect();
+            x = event.clientX - canvasRect.left;
+            y = event.clientY - canvasRect.top;
             
-            fill(colorR, colorG, colorB);
-            ellipse(x, y, 25, 25);
-          }
+            if (isDragging) 
+            {
+                ws.send(JSON.stringify({
+                    'type': 'mouseData',
+                    'id': clientId,
+                    'x': x,
+                    'y': y,
+                    'red': colorR,
+                    'green': colorG,
+                    'blue': colorB
+                }));
+                
+                fill(colorR, colorG, colorB);
+                ellipse(x, y, 25, 25);
+            }
         }
-      });
+    }
       
-      canvas.canvas.addEventListener('mouseup', function(event) 
-      {
+    function handleMouseUp() 
+    {
         isDragging = false;
-      });
-    
-      canvas.canvas.addEventListener('mouseover', function(event) 
-      {
-        isMouseOverEllipse = true;
-      });
-    
-      canvas.canvas.addEventListener('mouseout', function(event) 
-      {
         isMouseOverEllipse = false;
-      });
+    }
+
+    function handleMouseOver() 
+    {
+        isMouseOverEllipse = true;
+    }
+
+    function handleMouseOut() 
+    {
+        isMouseOverEllipse = false;
+    }
 
     function checkMouseInsideEllipse(mouseX, mouseY) 
     {
@@ -273,6 +275,12 @@ else
         const distance = Math.sqrt(dx * dx + dy * dy);
         return distance < 12.5; // Considering the radius of the ellipse is 12.5 (half of 25)
     }
+
+    document.addEventListener('mousedown', handleMouseDown);
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('mouseover', handleMouseOver);
+    document.addEventListener('mouseout', handleMouseOut);
 }
 
 const sensorButton = document.getElementById('sensor-button');
@@ -288,11 +296,7 @@ function setup()
     canvas = createCanvas(windowWidth * 0.7, windowHeight * 0.5);
     canvas.parent('canvas-container'); // Attach the canvas to the container div
     background(0);
-    
-    ellipseMode(CENTER);
-    // Draw the ellipse once at the start
-    fill(colorR, colorG, colorB);
-    ellipse(px, py, 25, 25);
+    fill(255);
 }
 
   
@@ -308,10 +312,19 @@ function draw()
     } 
     else 
     {
-        if (isMouseOverEllipse || isDragging) 
+        if (!isDragging) 
         {
+            fill(0, 10);
+            rect(0, 0, width, height);
+            
+            // Original drawing code
+            vx = vx + (0 - px) * 0.01;
+            vy = vy + (0 - py) * 0.01;
+            px = px + vx;
+            py = py + vy;
+            
             fill(colorR, colorG, colorB);
-            ellipse(x, y, 25, 25);
+            ellipse(px, py, 25, 25);
         }
     }
 }
