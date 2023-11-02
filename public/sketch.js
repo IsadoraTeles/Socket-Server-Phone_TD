@@ -27,6 +27,11 @@ let canvas;
 let isMouseOverEllipse = false;
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
+function mapValue(value, fromLow, fromHigh, toLow, toHigh) 
+{
+    return toLow + ((value - fromLow) / (fromHigh - fromLow)) * (toHigh - toLow);
+}
+
 ws.onopen = function () 
 {
   console.log('Connected to the server.');
@@ -75,8 +80,11 @@ function handleSensorData(data)
     let valColB = data.blue;
 
     console.log('Got : ', id, valPX, valPY, valueGamma, valColR, valColG, valColB);
+
+    let mappedPX = mapValue(valPX, 0, 512, 0, width);
+    let mappedPY = mapValue(valPY, 0, 288, 0, height);
     fill(valColR, valColG, valColB);
-    ellipse(valPX, valPY, 15, 15);
+    ellipse(mappedPX, mappedPY, 15, 15);
 }
 
 function handleMouseData(data) 
@@ -89,8 +97,12 @@ function handleMouseData(data)
     let valColB = data.blue;
 
     console.log('Got : ', id, valX, valY, valColR, valColG, valColB);
+    let mappedX = mapValue(valX, 0, 1024, 0, width);
+    let mappedY = mapValue(valY, 0, 576, 0, height);
+
+    // Use mappedX and mappedY for drawing
     fill(valColR, valColG, valColB);
-    ellipse(valX, valY, 15, 15);
+    ellipse(mappedX, mappedY, 15, 15);
 }
 
 ws.onerror = function (error) 
@@ -249,27 +261,31 @@ else
     {
         if (isMouseOverEllipse || isDragging) 
         {
-            const canvasRect = canvas.elt.getBoundingClientRect();
-            px = event.clientX - canvasRect.left;
-            py = event.clientY - canvasRect.top;
-            
+          const canvasRect = canvas.elt.getBoundingClientRect();
+          px = event.clientX - canvasRect.left;
+          py = event.clientY - canvasRect.top;
+      
+          if (px >= 0 && px <= width && py >= 0 && py <= height) 
+          {
             if (isDragging) 
             {
-                ws.send(JSON.stringify({
-                    'type': 'mouseData',
-                    'id': clientId,
-                    'px': px,
-                    'py': py,
-                    'red': colorR,
-                    'green': colorG,
-                    'blue': colorB
-                }));
-                
-                fill(colorR, colorG, colorB);
-                ellipse(px, py, 25, 25);
+              ws.send(JSON.stringify({
+                'type': 'mouseData',
+                'id': clientId,
+                'px': px,
+                'py': py,
+                'red': colorR,
+                'green': colorG,
+                'blue': colorB
+              }));
+              
+              fill(colorR, colorG, colorB);
+              ellipse(px, py, 25, 25);
             }
+          }
         }
-    }
+      }
+      
       
     function handleMouseUp() 
     {
@@ -311,7 +327,8 @@ sensorButton.addEventListener('click', function()
 
 function setup() 
 {
-    canvas = createCanvas(windowWidth * 0.7, windowHeight * 0.5);
+    canvas = createCanvas(512, 288);
+
     canvas.parent('canvas-container'); // Attach the canvas to the container div
     background(0);
     fill(255);
@@ -340,7 +357,7 @@ function draw()
     }
 }
 
-function windowResized() 
-{
-    resizeCanvas(windowWidth * 0.7, windowHeight * 0.5);
-}
+// function windowResized() 
+// {
+//     resizeCanvas(windowWidth * 0.7, windowHeight * 0.5);
+// }
