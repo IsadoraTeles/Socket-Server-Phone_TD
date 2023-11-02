@@ -161,8 +161,9 @@ if (isMobile)
 
     function handleOrientation(event) 
     {
-        let smoothing_factor = 0.9; // Adjust this between 0 (no smoothing) and 1 (maximum smoothing)
-        let scale_factor = 0.8; // Scale factor for adjusting sensor data range to canvas range
+        let smoothing_factor = 0.95; // Adjust this between 0 (no smoothing) and 1 (maximum smoothing)
+        let scale_factor = 0.5; // Scale factor for adjusting sensor data range to canvas range
+        let damping_factor = 0.98; // Damping factor to gradually reduce velocity
 
         let new_vx = 0, new_vy = 0;
 
@@ -180,21 +181,16 @@ if (isMobile)
         vx = vx * smoothing_factor + new_vx * (1 - smoothing_factor);
         vy = vy * smoothing_factor + new_vy * (1 - smoothing_factor);
 
+        // Apply damping
+        vx *= damping_factor;
+        vy *= damping_factor;
+
         // Update position and clip it to bounds
-        px += vx;
+        px += vx * updateRate;
+        px = Math.max(0, Math.min(width, px)); // Clip to bounds
 
-        if (px > width || px < 0) 
-        { 
-            px = Math.max(0, Math.min(width, px)); // Clip 
-            vx = 0;
-        }
-
-        py += vy;
-        if (py > height || py < 0) 
-        {
-            py = Math.max(0, Math.min(height, py)); // Clip
-            vy = 0;
-        }
+        py += vy * updateRate;
+        py = Math.max(0, Math.min(height, py)); // Clip to bounds
 
         ws.send(
         JSON.stringify({
