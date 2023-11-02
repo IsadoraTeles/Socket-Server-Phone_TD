@@ -15,8 +15,9 @@ canvas {
 }
 
 #info p {
-  font-size: 1.2em; /* Adjust as needed */
+  font-size: 1.3em; /* Adjust as needed */
   max-width: 80%; /* Adjust as needed */
+  margin-top: 20px; /* Adjust as needed */
   margin: 0 auto 10px auto; /* Center text and add space below */
 }
 
@@ -35,5 +36,5 @@ button {
 
 #canvas-container {
   display: inline-block;
-  margin-top: 20px; /* Adjust as needed */
+  margin-top: 30px; /* Adjust as needed */
 }
