@@ -15,9 +15,13 @@ const updateRate = 1/60; // Sensor refresh rate
 var isDragging = false;
 let clientId = 0;
 
-let colorR = Math.floor(Math.random() * 256);
-let colorG = Math.floor(Math.random() * 256);
-let colorB = Math.floor(Math.random() * 256);
+// let colorR = Math.floor(Math.random() * 256);
+// let colorG = Math.floor(Math.random() * 256);
+// let colorB = Math.floor(Math.random() * 256);
+
+let colorR = 255;
+let colorG = 255;
+let colorB = 255;
  
 let canvas;
 
@@ -124,6 +128,8 @@ window.addEventListener('beforeunload', () =>
 // If the device is a mobile phone, listen for sensor data
 if (isMobile) 
 {
+    mobile = true;
+
     function handleOrientation(event) 
     {
         let smoothing_factor = 0.9; // Adjust this between 0 (no smoothing) and 1 (maximum smoothing)
@@ -213,21 +219,25 @@ else
     document.addEventListener('mousedown', function(event) 
     {
         const canvasRect = canvas.elt.getBoundingClientRect();
-        if (checkMouseInsideEllipse(event.clientX - canvasRect.left, event.clientY - canvasRect.top)) 
+        const mouseX = event.clientX - canvasRect.left;
+        const mouseY = event.clientY - canvasRect.top;
+        if (checkMouseInsideEllipse(mouseX, mouseY)) 
         {
           isDragging = true;
+          x = mouseX;
+          y = mouseY;
         }
-      });
+    });
       
     document.addEventListener('mousemove', function(event) 
     {
         if (isDragging) 
         {
-            const canvasRect = canvas.elt.getBoundingClientRect();
-            x = event.clientX - canvasRect.left;
-            y = event.clientY - canvasRect.top;
-            ws.send(JSON.stringify(
-                {
+          const canvasRect = canvas.elt.getBoundingClientRect();
+          x = event.clientX - canvasRect.left;
+          y = event.clientY - canvasRect.top;
+          ws.send(JSON.stringify(
+            {
             'type': 'mouseData',
             'id': clientId,
             'x': x,
@@ -235,17 +245,15 @@ else
             'red': colorR,
             'green': colorG,
             'blue': colorB
-            }
-            ));
+          }));
         }
-    });
+      });
       
     document.addEventListener('mouseup', function(event) 
     {
         isDragging = false;
     });
 
-     // Corrected checkMouseInsideEllipse function
     function checkMouseInsideEllipse(mouseX, mouseY) 
     {
         const dx = mouseX - px;
@@ -265,10 +273,7 @@ sensorButton.addEventListener('click', function()
 
 function setup() 
 {
-    let canvasSizeW = windowWidth * 0.7;  // 70% of the window width
-    let canvasSizeH = windowHeight * 0.7;  // 70% of the window height
-
-    canvas = createCanvas(canvasSizeW, canvasSizeH);
+    canvas = createCanvas(windowWidth * 0.7, windowHeight * 0.5);
     canvas.parent('canvas-container'); // Attach the canvas to the container div
     background(0);
     
@@ -299,8 +304,5 @@ function draw()
 
 function windowResized() 
 {
-    let canvasSizeW = windowWidth * 0.7;
-    let canvasSizeH = windowHeight * 0.7;
-    resizeCanvas(canvasSizeW, canvasSizeH);
-    canvas.position((windowWidth - width) / 2, (windowHeight - height) / 2);
+    resizeCanvas(windowWidth * 0.7, windowHeight * 0.5);
 }

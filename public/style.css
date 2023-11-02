@@ -5,45 +5,26 @@ body {
   font-family: 'Arial', sans-serif;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   text-align: center;
   height: 100vh;
 }
 
-.container {
-  max-width: 600px; /* Adjust according to preference */
-  padding: 20px;
-  z-index: 1; /* Make sure text is above canvas */
-}
-
 canvas {
-  position: absolute;
   z-index: 0; /* Place canvas below text */
-}
-
-h1 {
-  font-size: 2em;
-  margin-bottom: 0.5em;
-}
-
-p {
-  font-size: 1em;
-  margin-bottom: 1em;
 }
 
 button {
   font-size: 1em;
   padding: 0.5em 1em;
   cursor: pointer;
+  margin-top: 10px; /* Adjust as needed */
 }
 
 #content {
-  text-align: center;
-}
-
-#info {
-  margin-bottom: 20px; /* Adjust as needed */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 #canvas-container {
