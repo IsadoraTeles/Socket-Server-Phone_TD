@@ -332,6 +332,11 @@ function draw()
             fill(colorR, colorG, colorB);
             ellipse(px, py, 25, 25);
         }
+        else
+        {
+            fill(255, 255, 255);
+            ellipse(px, py, 30, 30);
+        }
     }
 }
 
