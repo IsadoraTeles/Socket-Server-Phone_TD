@@ -45,25 +45,33 @@ wss.on("connection", function (ws, req)
   
   ws.on("message", (data) => 
   {
-    let stringifiedData = data.toString();
-    if (stringifiedData === 'pong') 
+    try 
     {
-      console.log('keepAlive');
-      return;
+      const parsedData = JSON.parse(data);
+
+      if (parsedData.type === 'pong') 
+      {
+        console.log('keepAlive');
+        return;
+      }
+
+      broadcast(ws, JSON.stringify(parsedData), false);
+    } 
+
+    catch (error) 
+    {
+      console.error('Failed to parse JSON:', error);
     }
-    broadcast(ws, stringifiedData, false);
+
   });
 
-  ws.on("close", (data) => 
+  ws.on("close", () => 
   {
     console.log("closing connection");
 
-    let stringifiedData = JSON.stringify({'type': 'clientOUT', 'id' : ws.clientId});
-    broadcast(ws, stringifiedData, false);
-
-    
+    const message = JSON.stringify({ type: 'clientOUT', id: ws.clientId });
+    broadcast(ws, message, false);
     delete clients[ws.clientId];
-
     console.log(Object.keys(clients).length);
     console.log(`Client disconnected with id ${ws.clientId}`);
 
@@ -75,43 +83,24 @@ wss.on("connection", function (ws, req)
   });
 });
 
-// Implement broadcast function because of ws doesn't have it
-const broadcast = (ws, message, includeSelf) => 
-{
-  if (includeSelf) 
-  {
-    wss.clients.forEach((client) => 
+// Implement broadcast function because ws doesn't have it
+const broadcast = (ws, message, includeSelf) => {
+  wss.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN && (includeSelf || client !== ws)) 
     {
-      if (client.readyState === WebSocket.OPEN) 
-      {
-        client.send(message);
-      }
-    });
-  } 
-  else 
-  {
-    wss.clients.forEach((client) => 
-    {
-      if (client !== ws && client.readyState === WebSocket.OPEN) 
-      {
-        client.send(message);
-      }
-    });
-  }
+      client.send(message);
+    }
+  });
 };
 
 /**
- * Sends a ping message to all connected clients every 50 seconds
+ * Sends a ping message to all connected clients every 20 seconds
  */
-const keepServerAlive = () => 
-{
-  keepAliveId = setInterval(() => 
-  {
-    wss.clients.forEach((client) => 
-    {
-      if (client.readyState === WebSocket.OPEN) 
-      {
-        client.send('ping');
+const keepServerAlive = () => {
+  keepAliveId = setInterval(() => {
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify({ type: 'ping' }));
       }
     });
   }, 20000);

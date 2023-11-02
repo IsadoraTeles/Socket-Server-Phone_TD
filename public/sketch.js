@@ -35,45 +35,64 @@ ws.onopen = function ()
 
 ws.onmessage = function (event) 
 {
-    const data = JSON.parse(event.data);
-
-    let stringifiedData = data.toString();
-
-    if(stringifiedData === 'ping') 
+    try 
     {
-        ws.send('pong');
-        console.log('got ping, sent pong');
-        return;
+        const data = JSON.parse(event.data);
+        
+        let stringifiedData = data.toString();
+
+        if(stringifiedData === 'ping') 
+        {
+            ws.send('pong');
+            console.log('got ping, sent pong');
+            return;
+        }
+
+        if (data.type === 'sensorData') 
+        {
+            let id = data.id;
+            let valPX = data.px;
+            let valPY = data.py;
+            let valueGamma = data.g;
+            let valColR = data.red; 
+            let valColG = data.green;
+            let valColB = data.blue;
+            console.log('Got : ', id, valPX, valPY, valueGamma, valColR, valColG, valColB);
+
+            fill(valColR, valColG, valColB); // Use ellipseColor for fill color
+            ellipse(valPX, valPY, 15, 15);
+        }
+        
+        if (data.type === 'mouseData') 
+        {
+            let id = data.id;
+            let valX = data.x;
+            let valY = data.y;
+            let valColR = data.red; 
+            let valColG = data.green;
+            let valColB = data.blue;
+            console.log('Got : ', id, valX, valY, valColR, valColG, valColB);
+
+            fill(valColR, valColG, valColB); // Use ellipseColor for fill color
+            ellipse(valX, valY, 15, 15);
+        }
+        
+    } 
+
+    catch (error) 
+    {
+        if (event.data === 'ping') 
+        {
+            ws.send('pong');
+            console.log('got ping, sent pong');
+        } 
+
+        else 
+        {
+            console.error('Error parsing JSON:', error);
+        }
     }
-
-    if (data.type === 'sensorData') 
-    {
-        let id = data.id;
-        let valPX = data.px;
-        let valPY = data.py;
-        let valueGamma = data.g;
-        let valColR = data.red; 
-        let valColG = data.green;
-        let valColB = data.blue;
-        console.log('Got : ', id, valPX, valPY, valueGamma, valColR, valColG, valColB);
-
-        fill(valColR, valColG, valColB); // Use ellipseColor for fill color
-        ellipse(valPX, valPY, 15, 15);
-      }
     
-      if (data.type === 'mouseData') 
-      {
-        let id = data.id;
-        let valX = data.x;
-        let valY = data.y;
-        let valColR = data.red; 
-        let valColG = data.green;
-        let valColB = data.blue;
-        console.log('Got : ', id, valX, valY, valColR, valColG, valColB);
-
-        fill(valColR, valColG, valColB); // Use ellipseColor for fill color
-        ellipse(valX, valY, 15, 15);
-      }
 };
 
 ws.onerror = function (error) 
@@ -246,6 +265,9 @@ else
             'green': colorG,
             'blue': colorB
           }));
+
+            fill(colorR, colorG, colorB);
+            ellipse(x, y, 25, 25);
         }
       });
       
