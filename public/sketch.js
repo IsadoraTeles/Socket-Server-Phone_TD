@@ -37,42 +37,64 @@ ws.onopen = function ()
 
 ws.onmessage = function (event) 
 {
-    let data = JSON.parse(event.data);
-    //let stringifiedData = data.toString();
+    try 
+    {
+        let data = JSON.parse(event.data);
+        switch (data.type) 
+        {
+            case 'ping':
+                ws.send('pong');
+                console.log('got ping, sent pong');
+                break;
 
-    if(data.type === 'ping') 
+            case 'sensorData':
+                handleSensorData(data);
+                break;
+
+            case 'mouseData':
+                handleMouseData(data);
+                break;
+
+            default:
+                console.log('Received unknown message type:', data.type);
+        }
+    } 
+
+    catch (error) 
     {
-        ws.send('pong');
-        console.log('got ping, sent pong');
-        return;
+        console.error('Error processing message:', error);
     }
-    if (data.type === 'sensorData') 
-    {
-        let id = data.id;
-        let valPX = data.px;
-        let valPY = data.py;
-        let valueGamma = data.g;
-        let valColR = data.red; 
-        let valColG = data.green;
-        let valColB = data.blue;
-        console.log('Got : ', id, valPX, valPY, valueGamma, valColR, valColG, valColB);
-        fill(valColR, valColG, valColB); // Use ellipseColor for fill color
-        ellipse(valPX, valPY, 15, 15);
-      }
-    
-      if (data.type === 'mouseData') 
-      {
-        let id = data.id;
-        let valX = data.x;
-        let valY = data.y;
-        let valColR = data.red; 
-        let valColG = data.green;
-        let valColB = data.blue;
-        console.log('Got : ', id, valX, valY, valColR, valColG, valColB);
-        fill(valColR, valColG, valColB); // Use ellipseColor for fill color
-        ellipse(valX, valY, 15, 15);
-      }
 };
+
+function handleSensorData(data) 
+{
+    let id = data.id;
+    let valPX = data.px;
+    let valPY = data.py;
+    let valueGamma = data.g;
+    let valColR = data.red;
+    let valColG = data.green;
+    let valColB = data.blue;
+
+    console.log('Got : ', id, valPX, valPY, valueGamma, valColR, valColG, valColB);
+    fill(valColR, valColG, valColB);
+    ellipse(valPX, valPY, 15, 15);
+}
+
+function handleMouseData(data) 
+{
+    let id = data.id;
+    let valX = data.x;
+    let valY = data.y;
+    let valColR = data.red;
+    let valColG = data.green;
+    let valColB = data.blue;
+
+    console.log('Got : ', id, valX, valY, valColR, valColG, valColB);
+    fill(valColR, valColG, valColB);
+    ellipse(valX, valY, 15, 15);
+}
+
 
 ws.onerror = function (error) 
 {
@@ -304,28 +326,15 @@ function draw()
 {
     //background(0); // Clear the canvas on each draw cycle
   
-    if(mobile) 
+    if(mobile)
     {
-        // For mobile, we directly use px and py for ellipse position
         fill(colorR, colorG, colorB);
         ellipse(px, py, 25, 25);
-    } 
-    else 
+    }
+    else if (!mobile && isDragging)
     {
-        if (!isDragging) 
-        {
-            fill(0, 10);
-            rect(0, 0, width, height);
-            
-            // Original drawing code
-            vx = vx + (0 - px) * 0.01;
-            vy = vy + (0 - py) * 0.01;
-            px = px + vx;
-            py = py + vy;
-            
-            fill(colorR, colorG, colorB);
-            ellipse(px, py, 25, 25);
-        }
+        fill(colorR, colorG, colorB);
+        ellipse(x, y, 25, 25);
     }
 }
 
