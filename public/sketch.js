@@ -161,7 +161,7 @@ if (isMobile)
 
     function handleOrientation(event) 
     {
-        let smoothing_factor = 0.1; // Adjust this between 0 (no smoothing) and 1 (maximum smoothing)
+        let smoothing_factor = 0.01; // Adjust this between 0 (no smoothing) and 1 (maximum smoothing)
         let scale_factor = 0.5; // Scale factor for adjusting sensor data range to canvas range
         let damping_factor = 1; // Damping factor to gradually reduce velocity
 
