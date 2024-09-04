@@ -1,2 +1,1 @@
-# Socket-Server-Template
- Websocket Node Server Template
+Code used to connect cellphones sensors to touchdesigner using websockets.
